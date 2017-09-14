@@ -345,14 +345,14 @@ public class XRefreshLayout extends FrameLayout implements NestedScrollingParent
             loadingLayout.onHeaderRefreshingComplete();
         else
             loadingLayout.onFooterRefreshingComplete();
-        if (scroY != 0)
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    smoothScroll(scroY);
-                }
-            }, 1000);
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                smoothScroll(scroY);
+            }
+        }, 1000);
     }
+
     public void completeRefresh(final String message) {
         isNeedInitLoadingLayout = true;
         final int scroY = 0 - getScrollY();
@@ -360,13 +360,12 @@ public class XRefreshLayout extends FrameLayout implements NestedScrollingParent
             loadingLayout.onHeaderRefreshingComplete(message);
         else
             loadingLayout.onFooterRefreshingComplete(message);
-        if (scroY != 0)
-            postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    smoothScroll(scroY);
-                }
-            }, 1000);
+        postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                smoothScroll(scroY);
+            }
+        }, 1000);
     }
 
     private OnRefreshListener listener;

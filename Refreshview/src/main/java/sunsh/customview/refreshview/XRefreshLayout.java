@@ -348,7 +348,7 @@ public class XRefreshLayout extends FrameLayout implements NestedScrollingParent
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                smoothScroll(scroY);
+                smoothScroll(0 - getScrollY());
             }
         }, 1000);
     }
@@ -363,7 +363,7 @@ public class XRefreshLayout extends FrameLayout implements NestedScrollingParent
         postDelayed(new Runnable() {
             @Override
             public void run() {
-                smoothScroll(scroY);
+                smoothScroll(0 - getScrollY());
             }
         }, 1000);
     }

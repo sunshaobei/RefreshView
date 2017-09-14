@@ -341,14 +341,14 @@ public class XRefreshLayout extends FrameLayout implements NestedScrollingParent
     public void completeRefresh() {
         isNeedInitLoadingLayout = true;
         final int scroY = 0 - getScrollY();
+        if (scroY > 0)
+            loadingLayout.onHeaderRefreshingComplete();
+        else
+            loadingLayout.onFooterRefreshingComplete();
         if (scroY != 0)
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (scroY > 0)
-                        loadingLayout.onHeaderRefreshingComplete();
-                    else
-                        loadingLayout.onFooterRefreshingComplete();
                     smoothScroll(scroY);
                 }
             }, 1000);
@@ -356,14 +356,14 @@ public class XRefreshLayout extends FrameLayout implements NestedScrollingParent
     public void completeRefresh(final String message) {
         isNeedInitLoadingLayout = true;
         final int scroY = 0 - getScrollY();
+        if (scroY > 0)
+            loadingLayout.onHeaderRefreshingComplete(message);
+        else
+            loadingLayout.onFooterRefreshingComplete(message);
         if (scroY != 0)
             postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (scroY > 0)
-                        loadingLayout.onHeaderRefreshingComplete(message);
-                    else
-                        loadingLayout.onFooterRefreshingComplete(message);
                     smoothScroll(scroY);
                 }
             }, 1000);

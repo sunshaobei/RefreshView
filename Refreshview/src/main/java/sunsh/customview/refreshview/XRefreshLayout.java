@@ -134,8 +134,7 @@ public class XRefreshLayout extends FrameLayout implements NestedScrollingParent
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (isSmoothScrolling) return true;
-        return super.dispatchTouchEvent(ev);
+        return isSmoothScrolling || getScrollY() != 0 || super.dispatchTouchEvent(ev);
     }
 
     @Override

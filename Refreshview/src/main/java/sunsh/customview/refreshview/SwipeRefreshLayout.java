@@ -25,6 +25,7 @@ package sunsh.customview.refreshview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.ColorInt;
@@ -496,7 +497,10 @@ public class SwipeRefreshLayout extends ViewGroup implements NestedScrollingPare
         mCurrentTargetOffsetBottom = mOriginalOffsetBottom;
         mSpinnerBottomOffsetEnd = mOriginalOffsetBottom - mSpinnerOffsetEnd;
 
-
+        //default refresh colorlist
+        this.setColorSchemeColors(Color.YELLOW,Color.RED,Color.GREEN,Color.BLUE);
+        //default loadmore colorlist
+        this.setBottomColorSchemeColors(Color.GREEN,Color.BLUE,Color.YELLOW,Color.RED);
     }
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {

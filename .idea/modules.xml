@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Refreshview/Refreshview.iml" filepath="$PROJECT_DIR$/Refreshview/Refreshview.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/refreshview.iml" filepath="$PROJECT_DIR$/refreshview.iml" />
     </modules>
   </component>

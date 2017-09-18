@@ -491,7 +491,7 @@ public class SwipeRefreshLayout extends ViewGroup implements NestedScrollingPare
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         int windowHeight = wm.getDefaultDisplay().getHeight();
         Log.e("fish","init+-+windowHeight=="+windowHeight);
-        mOriginalOffsetBottom = windowHeight - mCircleDiameter/2;
+        mOriginalOffsetBottom = windowHeight - mCircleDiameter/2 - 40;
         Log.e("fish","init+-+mOriginalOffsetBottom=="+mOriginalOffsetBottom);
 
         mCurrentTargetOffsetBottom = mOriginalOffsetBottom;

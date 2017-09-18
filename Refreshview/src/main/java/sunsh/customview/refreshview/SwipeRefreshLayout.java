@@ -493,7 +493,6 @@ public class SwipeRefreshLayout extends ViewGroup implements NestedScrollingPare
         Log.e("fish","init+-+windowHeight=="+windowHeight);
         mOriginalOffsetBottom = windowHeight - mCircleDiameter/2 - 40;
         Log.e("fish","init+-+mOriginalOffsetBottom=="+mOriginalOffsetBottom);
-
         mCurrentTargetOffsetBottom = mOriginalOffsetBottom;
         mSpinnerBottomOffsetEnd = mOriginalOffsetBottom - mSpinnerOffsetEnd;
 

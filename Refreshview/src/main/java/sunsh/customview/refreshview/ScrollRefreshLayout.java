@@ -103,6 +103,14 @@ public class ScrollRefreshLayout extends FrameLayout implements NestedScrollingP
     }
 
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (scroller.getCurrY()!=0){
+            return true;
+        }
+        return super.onTouchEvent(event);
+    }
+
+    @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         MAX_LOADING_LAYOUG_HEIGHT = getMeasuredHeight() / 2;

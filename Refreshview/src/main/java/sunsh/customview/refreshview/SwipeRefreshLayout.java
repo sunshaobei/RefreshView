@@ -293,6 +293,14 @@ public class SwipeRefreshLayout extends ViewGroup implements NestedScrollingPare
     };
 
 
+    public void setRefreshEnable(boolean b){
+        this.canRefresh = b;
+    }
+
+    public void setLoadMoreEnable(boolean b){
+        this.canLoadMore = b;
+    }
+
 
     /**重设状态，将circle隐藏起来*/
     void reset() {
@@ -1042,11 +1050,17 @@ public class SwipeRefreshLayout extends ViewGroup implements NestedScrollingPare
         return mCircleDiameter;
     }
 
+
+
+    boolean canLoadMore = true;
     /**
      * @return Whether it is possible for the child view of this layout to
      *         scroll up. Override this if the child view is a custom view.
      */
     public boolean canChildScrollUp() {
+
+        if (!canLoadMore) return false;
+
         if (mChildScrollUpCallback != null) {
             Log.e("fish","canChildScrollUp;mChildScrollUpCallback != null");
             return mChildScrollUpCallback.canChildScrollUp(this, mTarget);
@@ -1074,11 +1088,11 @@ public class SwipeRefreshLayout extends ViewGroup implements NestedScrollingPare
     }
 
 
+    boolean canRefresh = true;
     //自己写的方法
     /**判断是否而已向下拉*/
-    public boolean canChildScrollDown()
-    {
-        return ViewCompat.canScrollVertically(mTarget, 1);
+    public boolean canChildScrollDown() {
+        return canRefresh && ViewCompat.canScrollVertically(mTarget, 1);
     }
 
 

@@ -587,7 +587,7 @@ public class RefreshNLoadNestedRecyclerView extends LinearLayout implements Nest
                 mTotalUnconsumedBottom = 0;
                 mBottomIsScrolling = false;
             } else {//否则，先给父控件
-                mTotalUnconsumedBottom += dy;
+                mTotalUnconsumedBottom += (dy*4);
                 consumed[1] = dy;//原来传回去的是正数，结果越滑越快。。。改成负数之后就对了，开心
             }
             moveBottomSpinner(mTotalUnconsumedBottom);

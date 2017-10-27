@@ -142,8 +142,18 @@ public class ScrollRefreshLayout extends FrameLayout implements NestedScrollingP
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        if (isSmoothScrolling || scroller.getCurrY() != 0) return true;
-        return super.dispatchTouchEvent(ev);
+        if (isSmoothScrolling || scroller.getCurrY() != 0)
+            return true;
+        else
+            return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (isSmoothScrolling || scroller.getCurrY() != 0)
+            return true;
+        else
+            return super.onInterceptTouchEvent(ev);
     }
 
     @Override

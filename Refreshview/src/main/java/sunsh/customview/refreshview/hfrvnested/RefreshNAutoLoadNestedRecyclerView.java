@@ -9,10 +9,10 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.View;
 
-import sunsh.customview.refreshview.hfrv.AutoLoad.AutoLoadAdapter;
-import sunsh.customview.refreshview.hfrv.AutoLoad.AutoLoadFooterCreator;
-import sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator.DefaultAutoLoadFooterCreator;
-import sunsh.customview.refreshview.hfrv.PullToLoad.OnLoadListener;
+import sunsh.customview.refreshview.hfrvnested.AutoLoad.AutoLoadAdapter;
+import sunsh.customview.refreshview.hfrvnested.AutoLoad.AutoLoadFooterCreator;
+import sunsh.customview.refreshview.hfrvnested.DefaultHeaderAndFooterCreator.DefaultAutoLoadFooterCreator;
+import sunsh.customview.refreshview.hfrvnested.PullToLoad.OnLoadListener;
 import sunsh.customview.refreshview.hfrvnested.PullToRefresh.PullToRefreshRecyclerView;
 
 /**

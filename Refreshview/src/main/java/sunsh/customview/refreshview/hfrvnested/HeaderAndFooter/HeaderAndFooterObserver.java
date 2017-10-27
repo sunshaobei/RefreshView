@@ -3,6 +3,8 @@ package sunsh.customview.refreshview.hfrvnested.HeaderAndFooter;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
+import sunsh.customview.refreshview.hfrvnested.PullToRefresh.PullToRefreshRecyclerView;
+
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;

@@ -8,6 +8,7 @@ import android.view.View;
 
 import sunsh.customview.refreshview.RefreshNLoadRecyclerView;
 import sunsh.customview.refreshview.hfrvnested.HeaderAndFooter.HeaderAndFooterAdapter;
+import sunsh.customview.refreshview.hfrvnested.PullToRefresh.PullToRefreshRecyclerView;
 import sunsh.customview.refreshview.hfrvnested.RefreshNAutoLoadNestedRecyclerView;
 
 /**

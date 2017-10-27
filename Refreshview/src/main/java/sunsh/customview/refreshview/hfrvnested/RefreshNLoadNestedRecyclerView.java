@@ -242,10 +242,21 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
         if (mLoadFooterCreator != null)
             mLoadFooterCreator.onStopLoad();
         FmState = STATE_DEFAULT;
+
         FreplyPull();
 
         int startItem = mRealAdapter.getItemCount() + mAdapter.getHeadersCount() - loadItemCount;
         mAdapter.notifyItemRangeInserted(startItem, loadItemCount);
+    }
+    /**
+     * 结束刷新
+     */
+    public void completeLoad() {
+        if (mLoadFooterCreator != null)
+            mLoadFooterCreator.onStopLoad();
+        FmState = STATE_DEFAULT;
+        FreplyPull();
+        mAdapter.notifyDataSetChanged();
     }
 
     /**

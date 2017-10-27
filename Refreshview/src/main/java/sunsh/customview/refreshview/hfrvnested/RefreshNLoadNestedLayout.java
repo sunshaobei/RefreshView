@@ -90,30 +90,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
     private static final int INVALID_POINTER = -1;
     private static final float DRAG_RATE = .5f;
 
-    // Max amount of circle that can be filled by progress during swipe gesture,
-    // where 1.0 is a full circle
-    private static final float MAX_PROGRESS_ANGLE = .8f;
-
-    private static final int SCALE_DOWN_DURATION = 150;
-
-    private static final int ALPHA_ANIMATION_DURATION = 300;
-
-    private static final int ANIMATE_TO_TRIGGER_DURATION = 200;
-
-    private static final int ANIMATE_TO_START_DURATION = 200;
-
-    // Default background for the progress spinner
-    private static final int CIRCLE_BG_LIGHT = 0xFFFAFAFA;
-    // Default offset in dips from the top of the view to where the progress spinner should stop
-    private static final int DEFAULT_CIRCLE_TARGET = 64;
-
     private View mTarget; // the target of the gesture
-    OnRefreshListener mListener;
-
-    OnBottomRefreshListener mListenerBottom;
-
-
-    ScrollView s;
 
     private int mTouchSlop;
 
@@ -138,18 +115,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
     private float mInitialDownY;
     private boolean mIsBeingDragged;
     private int mActivePointerId = INVALID_POINTER;
-    // Whether this item is scaled up rather than clipped
-    /**
-     * 如果在z轴它的上面没有东西，那么为true
-     */
-    boolean mScale;
 
-    // Target is returning to its start offset because it was cancelled or a
-    // refresh was triggered.
-    /**
-     * 是否正在返回底部
-     */
-    private boolean mReturningToEnd;
     private final DecelerateInterpolator mDecelerateInterpolator;
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
@@ -159,46 +125,17 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
     private OnChildScrollUpCallback mChildScrollUpCallback;
 
 
-    Handler hd = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            Log.d("fish", "getMessageName=" + msg.what);
-            reset();
-            super.handleMessage(msg);
-        }
-    };
-
     //add
     private boolean mBottomIsScrolling;
-
-    public void setRefreshEnable(boolean b) {
-        this.canRefresh = b;
-    }
-
-    public void setLoadMoreEnable(boolean b) {
-        this.canLoadMore = b;
-    }
-
-
-    /**
-     * 重设状态，将circle隐藏起来
-     */
-    void reset() {
-        //TODO
-    }
 
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (!enabled) {
-            reset();
-        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        reset();
     }
 
     public RefreshNLoadNestedLayout(Context context) {
@@ -245,20 +182,6 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
     public RefreshNLoadNestedRecyclerView getRv() {
         return getLoadMore();
     }
-
-    /**
-     * Set the listener to be notified when a refresh is triggered via the swipe
-     * gesture.
-     */
-    public void setOnRefreshListener(OnRefreshListener listener) {
-        mListener = listener;
-    }
-
-
-    public void setOnBottomRefreshListenrer(OnBottomRefreshListener listener) {
-        mListenerBottom = listener;
-    }
-
 
     /**
      * Pre API 11, alpha is used to make the progress circle appear instead of scale.
@@ -314,104 +237,13 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         }
     }
 
-//    @Override
-//    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-//        final int width = getMeasuredWidth();
-//        final int height = getMeasuredHeight();
-//        if (getChildCount() == 0) {
-//            return;
-//        }
-//        if (mTarget == null) {
-//            ensureTarget();
-//        }
-//        if (mTarget == null) {
-//            return;
-//        }
-//        final View child = mTarget;
-//        final int childLeft = getPaddingLeft();
-//        final int childTop = getPaddingTop();
-//        final int childWidth = width - getPaddingLeft() - getPaddingRight();
-//        final int childHeight = height - getPaddingTop() - getPaddingBottom();
-//        child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
-//        Log.e(LOG_TAG,"onLayout,childTop=="+childTop+",childHeight"+childHeight);
-//        //草，就是因为这个，才会滚不回去，在重绘的过程中会进行新一次的onLayout
-//       /* if(firstMeasure) {//其实已经没有必要摆在这里了
-//            //  mOriginalOffsetBottom = height + mCircleDiameter;
-//            //mOriginalOffsetBottom = 1250;
-//            mCurrentTargetOffsetBottom = mOriginalOffsetBottom;
-//            mSpinnerBottomOffsetEnd = mOriginalOffsetBottom - mSpinnerOffsetEnd;
-//            firstMeasure = false;
-//            Log.e("fish", "firstMeasure,mCurrentTargetOffsetBottom==" + mCurrentTargetOffsetBottom + ",mSpinnerBottomOffsetEnd==" + mSpinnerBottomOffsetEnd);
-//            Log.e("fish", "firstMeasure,mOriginalOffsetBottom==" + mOriginalOffsetBottom);
-//        }*/
-//
-//        int circleWidth = mCircleView.getMeasuredWidth();
-//        int circleHeight = mCircleView.getMeasuredHeight();
-//        mCircleView.layout((width / 2 - circleWidth / 2), mCurrentTargetOffsetTop,
-//                (width / 2 + circleWidth / 2), mCurrentTargetOffsetTop + circleHeight);
-////        mCircleView.layout((width / 2 - circleWidth / 2), childHeight/2,
-////                     (width / 2 + circleWidth / 2), childHeight/2 + circleHeight);
-//
-//      // mCurrentTargetOffsetBottom = mOriginalOffsetBottom;
-//        int circleBottomWidth = mCircleViewBottom.getMeasuredWidth();
-//        int circleBottomHeight = mCircleViewBottom.getMeasuredHeight();
-//        mCircleViewBottom.setVisibility(View.VISIBLE);
-//        mCircleViewBottom.layout((width / 2 - circleBottomWidth / 2), mCurrentTargetOffsetBottom - circleBottomHeight,
-//                (width / 2 + circleBottomWidth / 2), mCurrentTargetOffsetBottom);
-//      //  mProgressBottom.start();
-//    }
-//
-//    @Override
-//    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//        if (mTarget == null) {
-//            ensureTarget();
-//        }
-//        if (mTarget == null) {
-//            return;
-//        }
-//        mTarget.measure(MeasureSpec.makeMeasureSpec(
-//                getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
-//                MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
-//                getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
-//        mCircleView.measure(MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY),
-//                MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY));
-//        mCircleViewIndex = -1;
-//        // Get the index of the circleview.
-//        for (int index = 0; index < getChildCount(); index++) {
-//            if (getChildAt(index) == mCircleView) {
-//                mCircleViewIndex = index;
-//                Log.e(LOG_TAG,"mCircleViewIndex=="+mCircleViewIndex);
-//                break;
-//            }
-//        }
-//
-//       mCircleViewBottom.measure(MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY),
-//                MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY));
-//        mCircleViewBottomIndex = -1;
-//        // Get the index of the circleview.
-//        for (int index = 0; index < getChildCount(); index++) {
-//            if (getChildAt(index) == mCircleViewBottom) {
-//                mCircleViewBottomIndex = index;
-//                Log.e(LOG_TAG,"mCircleViewBottomIndex=="+mCircleViewBottomIndex);
-//                break;
-//            }
-//        }
-//
-//
-//    }
 
-
-    boolean canLoadMore = true;
 
     /**
      * @return Whether it is possible for the child view of this layout to
      * scroll up. Override this if the child view is a custom view.
      */
     public boolean canChildScrollUp() {
-
-        if (!canLoadMore) return false;
-
         if (mChildScrollUpCallback != null) {
             Log.e("fish", "canChildScrollUp;mChildScrollUpCallback != null");
             return mChildScrollUpCallback.canChildScrollUp(this, mTarget);
@@ -438,15 +270,13 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         }
     }
 
-
-    boolean canRefresh = true;
     //自己写的方法
 
     /**
      * 判断是否而已向下拉
      */
     public boolean canChildScrollDown() {
-        return canRefresh && ViewCompat.canScrollVertically(mTarget, 1);
+        return ViewCompat.canScrollVertically(mTarget, 1);
     }
 
 

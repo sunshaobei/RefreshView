@@ -1,4 +1,4 @@
-package sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator;
+package sunsh.customview.refreshview.hfrvnested.DefaultHeaderAndFooterCreator;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import sunsh.customview.refreshview.R;
 import sunsh.customview.refreshview.RefreshNLoadRecyclerView;
-import sunsh.customview.refreshview.hfrv.PullToLoad.LoadFooterCreator;
+import sunsh.customview.refreshview.hfrvnested.PullToLoad.LoadFooterCreator;
 
 
 /**

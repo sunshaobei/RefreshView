@@ -1,4 +1,4 @@
-package sunsh.customview.refreshview.hfrv.Divider;
+package sunsh.customview.refreshview.hfrvnested.Divider;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -7,9 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import sunsh.customview.refreshview.RefreshNLoadRecyclerView;
-import sunsh.customview.refreshview.hfrv.PullToRefresh.PullToRefreshRecyclerView;
+import sunsh.customview.refreshview.hfrvnested.HeaderAndFooter.HeaderAndFooterAdapter;
 import sunsh.customview.refreshview.hfrvnested.RefreshNAutoLoadNestedRecyclerView;
-import sunsh.customview.refreshview.hfrv.HeaderAndFooter.HeaderAndFooterAdapter;
 
 /**
  * Created by sunsh on 2016/9/25.

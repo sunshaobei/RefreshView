@@ -1,4 +1,4 @@
-package sunsh.customview.refreshview.hfrv.AutoLoad;
+package sunsh.customview.refreshview.hfrvnested;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,27 +9,28 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.View;
 
-import sunsh.customview.refreshview.hfrv.PullToRefresh.PullToRefreshRecyclerView;
+import sunsh.customview.refreshview.hfrv.AutoLoad.AutoLoadAdapter;
+import sunsh.customview.refreshview.hfrv.AutoLoad.AutoLoadFooterCreator;
 import sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator.DefaultAutoLoadFooterCreator;
 import sunsh.customview.refreshview.hfrv.PullToLoad.OnLoadListener;
-
+import sunsh.customview.refreshview.hfrvnested.PullToRefreshRecyclerView;
 
 /**
- * Created by Administrator on 2016/9/26.
+ * Created by sunsh on 2016/9/26.
  */
-public class AutoLoadRecyclerView extends PullToRefreshRecyclerView {
+public class RefreshNAutoLoadNestedRecyclerView extends PullToRefreshRecyclerView {
 
-    public AutoLoadRecyclerView(Context context) {
+    public RefreshNAutoLoadNestedRecyclerView(Context context) {
         super(context);
         init(context);
     }
 
-    public AutoLoadRecyclerView(Context context, AttributeSet attrs) {
+    public RefreshNAutoLoadNestedRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public AutoLoadRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+    public RefreshNAutoLoadNestedRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }
@@ -38,8 +39,8 @@ public class AutoLoadRecyclerView extends PullToRefreshRecyclerView {
     private AutoLoadAdapter mAdapter;
     private Adapter mRealAdapter;
 
-    private boolean mIsLoading = false;
-    private boolean mLoadMoreEnable = true;
+    public boolean mIsLoading = false;
+    private boolean mLoadMoreEnable = false;
     private boolean mNoMore = false;
     private View mNoMoreView;
 
@@ -147,6 +148,7 @@ public class AutoLoadRecyclerView extends PullToRefreshRecyclerView {
 
     /**设置加载监听*/
     public void setOnLoadListener(OnLoadListener onLoadListener) {
+        mLoadMoreEnable = true;
         this.mOnLoadListener = onLoadListener;
     }
 

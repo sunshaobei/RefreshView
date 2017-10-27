@@ -123,26 +123,6 @@ public class CircleLoadingLayout implements ILoadingLayout {
         handler.sendEmptyMessage(MSG_FOOTER);
     }
 
-    @Override
-    public void onHeaderRefreshingComplete() {
-
-    }
-
-    @Override
-    public void onFooterRefreshingComplete() {
-
-    }
-
-    @Override
-    public void onHeaderRefreshingComplete(String message) {
-
-    }
-
-    @Override
-    public void onFooterRefreshingComplete(String message) {
-
-    }
-
     private void rotateView(View view){
         ViewCompat.animate(view).rotationXBy(360).setDuration(1000)
                 .setInterpolator(new DecelerateInterpolator())

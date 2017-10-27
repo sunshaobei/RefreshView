@@ -104,7 +104,7 @@ public class ScrollRefreshLayout extends FrameLayout implements NestedScrollingP
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (scroller.getCurrY()!=0){
+        if (scroller.getCurrY() != 0) {
             return true;
         }
         return super.onTouchEvent(event);
@@ -347,33 +347,7 @@ public class ScrollRefreshLayout extends FrameLayout implements NestedScrollingP
      * complete the refresh state!
      */
     public void completeRefresh() {
-        final int scroY = 0 - getScrollY();
-        if (scroY > 0)
-            loadingLayout.onHeaderRefreshingComplete();
-        else
-            loadingLayout.onFooterRefreshingComplete();
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                isNeedInitLoadingLayout = true;
-                smoothScroll(0 - getScrollY());
-            }
-        }, 500);
-    }
-
-    public void completeRefresh(final String message) {
-        final int scroY = 0 - getScrollY();
-        if (scroY > 0)
-            loadingLayout.onHeaderRefreshingComplete(message);
-        else
-            loadingLayout.onFooterRefreshingComplete(message);
-        postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                isNeedInitLoadingLayout = true;
-                smoothScroll(0 - getScrollY());
-            }
-        }, 500);
+        smoothScroll(0 - getScrollY());
     }
 
     private OnRefreshListener listener;

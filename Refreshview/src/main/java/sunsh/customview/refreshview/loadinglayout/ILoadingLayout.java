@@ -34,9 +34,4 @@ public interface ILoadingLayout {
      */
     void onHeaderRefreshing();
     void onFooterRefreshing();
-    void onHeaderRefreshingComplete();
-    void onFooterRefreshingComplete();
-    void onHeaderRefreshingComplete(String message);
-    void onFooterRefreshingComplete(String message);
-
 }

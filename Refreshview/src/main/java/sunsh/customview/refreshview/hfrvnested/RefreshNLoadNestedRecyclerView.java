@@ -1,4 +1,4 @@
-package sunsh.customview.refreshview;
+package sunsh.customview.refreshview.hfrvnested;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -15,29 +14,28 @@ import sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator.DefaultLo
 import sunsh.customview.refreshview.hfrv.PullToLoad.LoadFooterCreator;
 import sunsh.customview.refreshview.hfrv.PullToLoad.OnLoadListener;
 import sunsh.customview.refreshview.hfrv.PullToLoad.PullToLoadAdapter;
-import sunsh.customview.refreshview.hfrv.PullToRefresh.PullToRefreshRecyclerView;
 
 
 /**
- * Created by sunsha on 2017/10/23.
+ * Created by sunsh on 2016/9/21.
  */
-public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
-    public RefreshNLoadRecyclerView(Context context) {
+public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
+    public RefreshNLoadNestedRecyclerView(Context context) {
         super(context);
         init(context);
     }
 
-    public RefreshNLoadRecyclerView(Context context, AttributeSet attrs) {
+    public RefreshNLoadNestedRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public RefreshNLoadRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+    public RefreshNLoadNestedRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }
 
-    private int mState = STATE_DEFAULT;
+    public int FmState = STATE_DEFAULT;
     //    初始
     public final static int STATE_DEFAULT = 0;
     //    正在上拉
@@ -54,11 +52,11 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
     //   位于加载View底部的view，通过改变其高度来上拉
     private View bottomView;
     //  加载尾部
-    private View mLoadView;
+    public View mLoadView;
     //  没有更多的尾部
     private View mNoMoreView;
     //    用于测量高度的加载View
-    private int mLoadViewHeight = 0;
+    public int mLoadViewHeight = 0;
     private float mFirstY = 0;
     private boolean mPulling = false;
     //    是否可以上拉加载
@@ -125,63 +123,16 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
         if (getChildCount() >= getAdapter().getItemCount()) {
             if (mLoadView.getVisibility() != GONE) {
                 mLoadView.setVisibility(GONE);
-                mState = STATE_DEFAULT;
-                replyPull();
+                FmState = STATE_DEFAULT;
+                FreplyPull();
             }
         } else {
             if (mLoadView.getVisibility() != VISIBLE) {
                 mLoadView.setVisibility(VISIBLE);
-                mState = STATE_DEFAULT;
-                replyPull();
+                FmState = STATE_DEFAULT;
+                FreplyPull();
             }
         }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent e) {
-//        若不允许拖动
-        if (!mLoadMoreEnable) return super.onTouchEvent(e);
-//        若加载尾部为空，不处理
-        if (mLoadView == null)
-            return super.onTouchEvent(e);
-//        若当前加载尾部被隐藏(不足一屏)
-        if (mLoadView.getVisibility() != VISIBLE)
-            return super.onTouchEvent(e);
-
-//        若回弹动画正在进行，不处理
-        if (valueAnimator != null && valueAnimator.isRunning())
-            return super.onTouchEvent(e);
-        if (mLoadViewHeight == 0) {
-            mLoadViewHeight = mLoadView.getMeasuredHeight();
-        }
-
-        switch (e.getAction()) {
-            case MotionEvent.ACTION_MOVE:
-                if (!mPulling) {
-                    if (isBottom()) {
-//                        当listview滑动到最低部时，记录当前y坐标
-                        mFirstY = e.getRawY();
-                    }
-//                    若listview没有滑动到最低部，不处理
-                    else
-                        break;
-                }
-                float distance = (int) ((mFirstY - e.getRawY())* mLoadRatio);
-//                若向上滑动(此时加载胃部已隐藏)，不处理
-                if (distance < 0) break;
-                mPulling = true;
-//                若加载中，距离需加上尾部的高度
-                if (mState == STATE_LOADING) {
-                    distance += mLoadViewHeight;
-                }
-                setState(distance);
-                return true;
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
-                replyPull();
-                break;
-        }
-        return super.onTouchEvent(e);
     }
 
     /**
@@ -196,30 +147,31 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
      * 刷新中不在此处判断，在手指抬起时才判断
      */
     private int lastState;
-    private void setState(float distance) {
+    public void FsetState(float distance) {
+        if (!mLoadMoreEnable)return;
 //        刷新中/没有更多，状态不变
-        if (mState == STATE_LOADING || mState == STATE_NO_MORE) {
+        if (FmState == STATE_LOADING || FmState == STATE_NO_MORE) {
 
         } else if (distance == 0) {
-            mState = STATE_DEFAULT;
+            FmState = STATE_DEFAULT;
         }
 //        松手刷新
         else if (Math.abs(distance) >= mLoadViewHeight) {
-            lastState = mState;
-            mState = STATE_RELEASE_TO_LOAD;
+            lastState = FmState;
+            FmState = STATE_RELEASE_TO_LOAD;
             if (mLoadFooterCreator != null)
                 if (!mLoadFooterCreator.onReleaseToLoad(distance,lastState))
                     return;
         }
 //        正在拖动
         else if (Math.abs(distance) < mLoadViewHeight) {
-            lastState = mState;
-            mState = STATE_PULLING;
+            lastState = FmState;
+            FmState = STATE_PULLING;
             if (mLoadFooterCreator != null)
                 if (!mLoadFooterCreator.onStartPull(distance,lastState))
                     return;
         }
-        startPull(distance);
+        FstartPull(distance);
         scrollToPosition(getLayoutManager().getItemCount() - 1);
     }
 
@@ -227,7 +179,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
      * 拖动或回弹时，改变低部的margin
      */
     private ViewGroup.LayoutParams layoutParams;
-    private void startPull(float distance) {
+    public void FstartPull(float distance) {
 //            该view的高度不能为0，否则将无法判断是否已滑动到底部
         if (distance < 1)
             distance = 1;
@@ -241,29 +193,30 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
     /**
      * 松手回弹
      */
-    private void replyPull() {
+    public void FreplyPull() {
+        if (!mLoadMoreEnable) return;
         mPulling = false;
 //        回弹位置
         float destinationY = 0;
 //        判断当前状态
 //        若是刷新中，回弹
-        if (mState == STATE_LOADING) {
+        if (FmState == STATE_LOADING) {
             destinationY = mLoadViewHeight;
         }
 //        若是松手刷新，刷新，回弹
-        else if (mState == STATE_RELEASE_TO_LOAD) {
+        else if (FmState == STATE_RELEASE_TO_LOAD) {
 //            改变状态
-            mState = STATE_LOADING;
+            FmState = STATE_LOADING;
 //            刷新
             if (mOnLoadListener != null)
                 mOnLoadListener.onStartLoading(mRealAdapter.getItemCount());
             if (mLoadFooterCreator != null)
                 mLoadFooterCreator.onStartLoading();
 //            若在onStartRefreshing中调用了completeRefresh方法，将不会滚回初始位置，因此这里需加个判断
-            if (mState != STATE_LOADING) return;
+            if (FmState != STATE_LOADING) return;
             destinationY = mLoadViewHeight;
-        } else if (mState == STATE_DEFAULT || mState == STATE_PULLING) {
-            mState = STATE_DEFAULT;
+        } else if (FmState == STATE_DEFAULT || FmState == STATE_PULLING) {
+            FmState = STATE_DEFAULT;
         }
 
         LayoutParams layoutParams = (RecyclerView.LayoutParams) bottomView.getLayoutParams();
@@ -275,7 +228,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 float nowDistance = (float) animation.getAnimatedValue();
-                startPull(nowDistance);
+                FstartPull(nowDistance);
             }
         });
         valueAnimator.start();
@@ -287,8 +240,8 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
     public void completeLoad(int loadItemCount) {
         if (mLoadFooterCreator != null)
             mLoadFooterCreator.onStopLoad();
-        mState = STATE_DEFAULT;
-        replyPull();
+        FmState = STATE_DEFAULT;
+        FreplyPull();
 
         int startItem = mRealAdapter.getItemCount() + mAdapter.getHeadersCount() - loadItemCount;
         mAdapter.notifyItemRangeInserted(startItem, loadItemCount);
@@ -322,7 +275,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
      * 设置没有更多了
      */
     public void setNoMore(boolean noMore) {
-        this.mState = noMore ? STATE_NO_MORE : STATE_DEFAULT;
+        this.FmState = noMore ? STATE_NO_MORE : STATE_DEFAULT;
         if (noMore) {
             if (mNoMoreView != null) {
                 mAdapter.setLoadView(mNoMoreView);

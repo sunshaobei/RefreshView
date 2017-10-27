@@ -97,36 +97,4 @@ public class DefaultLoadingLayout implements ILoadingLayout {
         ivFooterProgress.setVisibility(View.VISIBLE);
         footerAnimdrawable.start();
     }
-
-    @Override
-    public void onHeaderRefreshingComplete() {
-        tvHeaderState.setText("刷新成功");
-        ivHeaderArrow.setVisibility(View.VISIBLE);
-        ivHeaderProgress.setVisibility(View.GONE);
-        ivHeaderArrow.setRotation(180);
-    }
-
-    @Override
-    public void onFooterRefreshingComplete() {
-        tvFooterState.setText("加载成功");
-        ivFooterArrow.setVisibility(View.VISIBLE);
-        ivFooterProgress.setVisibility(View.GONE);
-        ivFooterArrow.setRotation(180);
-    }
-    @Override
-    public void onHeaderRefreshingComplete(String message) {
-        tvHeaderState.setText(message);
-        ivHeaderArrow.setVisibility(View.VISIBLE);
-        ivHeaderProgress.setVisibility(View.GONE);
-        ivHeaderArrow.setRotation(180);
-    }
-
-    @Override
-    public void onFooterRefreshingComplete(String message) {
-        tvFooterState.setText(message);
-        ivFooterArrow.setVisibility(View.VISIBLE);
-        ivFooterProgress.setVisibility(View.GONE);
-        ivFooterArrow.setRotation(180);
-    }
-
 }

@@ -10,7 +10,7 @@
         android:id="@+id/iv"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:src="@drawable/loading"
+        android:src="@drawable/rl_loading"
         />
 
     <TextView

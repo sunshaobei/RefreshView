@@ -98,7 +98,7 @@ public class ScrollRefreshLayout extends FrameLayout implements NestedScrollingP
         }
         refreshView = getChildAt(0);
 
-        //create loading layout:  header and footer
+        //create rl_loading layout:  header and footer
         initLoadingLayout();
     }
 

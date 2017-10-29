@@ -33,7 +33,7 @@ public class DefaultRefreshHeaderCreator extends RefreshHeaderCreator {
     @Override
     public boolean onStartPull(float distance,int lastState) {
         if (lastState == PullToRefreshRecyclerView.STATE_DEFAULT ) {
-            iv.setImageResource(R.drawable.arrow_down);
+            iv.setImageResource(R.drawable.rl_arrow_down);
             iv.setRotation(0f);
             tv.setText("下拉刷新");
         } else if (lastState == PullToRefreshRecyclerView.STATE_RELEASE_TO_REFRESH) {
@@ -54,7 +54,7 @@ public class DefaultRefreshHeaderCreator extends RefreshHeaderCreator {
     @Override
     public boolean onReleaseToRefresh(float distance,int lastState) {
         if (lastState == PullToRefreshRecyclerView.STATE_DEFAULT ) {
-            iv.setImageResource(R.drawable.arrow_down);
+            iv.setImageResource(R.drawable.rl_arrow_down);
             iv.setRotation(-180f);
             tv.setText("松手立即刷新");
         } else if (lastState == PullToRefreshRecyclerView.STATE_PULLING) {
@@ -66,7 +66,7 @@ public class DefaultRefreshHeaderCreator extends RefreshHeaderCreator {
 
     @Override
     public void onStartRefreshing() {
-        iv.setImageResource(R.drawable.loading);
+        iv.setImageResource(R.drawable.rl_loading);
         startLoadingAnim();
         tv.setText("正在刷新...");
     }

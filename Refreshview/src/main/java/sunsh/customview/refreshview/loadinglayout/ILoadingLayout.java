@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 
 public interface ILoadingLayout {
     /**
-     * make your loading view!
+     * make your rl_loading view!
      * @return
      */
     View createLoadingHeader(Context context, ViewGroup parent);

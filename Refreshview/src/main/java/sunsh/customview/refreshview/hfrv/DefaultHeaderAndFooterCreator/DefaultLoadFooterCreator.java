@@ -36,7 +36,7 @@ public class DefaultLoadFooterCreator extends LoadFooterCreator {
     @Override
     public boolean onStartPull(float distance, int lastState) {
         if (lastState == RefreshNLoadRecyclerView.STATE_DEFAULT) {
-            iv.setImageResource(R.drawable.arrow_down);
+            iv.setImageResource(R.drawable.rl_arrow_down);
             iv.setRotation(-180f);
             tv.setText("上拉加载");
         } else if (lastState == RefreshNLoadRecyclerView.STATE_RELEASE_TO_LOAD) {
@@ -49,7 +49,7 @@ public class DefaultLoadFooterCreator extends LoadFooterCreator {
     @Override
     public boolean onReleaseToLoad(float distance, int lastState) {
         if (lastState == RefreshNLoadRecyclerView.STATE_DEFAULT ) {
-            iv.setImageResource(R.drawable.arrow_down);
+            iv.setImageResource(R.drawable.rl_arrow_down);
             iv.setRotation(0f);
             tv.setText("松手立即加载");
         } else if (lastState == RefreshNLoadRecyclerView.STATE_PULLING) {
@@ -61,7 +61,7 @@ public class DefaultLoadFooterCreator extends LoadFooterCreator {
 
     @Override
     public void onStartLoading() {
-        iv.setImageResource(R.drawable.loading);
+        iv.setImageResource(R.drawable.rl_loading);
         startLoadingAnim();
         tv.setText("正在加载...");
     }

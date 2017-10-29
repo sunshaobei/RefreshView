@@ -294,6 +294,14 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
         mAdapter.notifyItemRangeInserted(startItem, loadItemCount);
     }
 
+    public void completeLoad(){
+        if (mLoadFooterCreator != null)
+            mLoadFooterCreator.onStopLoad();
+        mState = STATE_DEFAULT;
+        replyPull();
+        mAdapter.notifyDataSetChanged();
+    }
+
     /**
      * 设置监听
      */

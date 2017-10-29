@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator.DefaultLoadFooterCreator;
 import sunsh.customview.refreshview.hfrv.PullToLoad.LoadFooterCreator;
+import sunsh.customview.refreshview.hfrv.PullToLoad.LoadListener;
 import sunsh.customview.refreshview.hfrv.PullToLoad.OnLoadListener;
 import sunsh.customview.refreshview.hfrv.PullToLoad.PullToLoadAdapter;
 import sunsh.customview.refreshview.hfrv.PullToRefresh.PullToRefreshRecyclerView;
@@ -67,6 +68,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
     private ValueAnimator valueAnimator;
     //    加载监听
     private OnLoadListener mOnLoadListener;
+    private LoadListener loadListener;
     //  加载
     private LoadFooterCreator mLoadFooterCreator;
 
@@ -257,6 +259,8 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
 //            刷新
             if (mOnLoadListener != null)
                 mOnLoadListener.onStartLoading(mRealAdapter.getItemCount());
+            if (loadListener != null)
+                loadListener.onLoad();
             if (mLoadFooterCreator != null)
                 mLoadFooterCreator.onStartLoading();
 //            若在onStartRefreshing中调用了completeRefresh方法，将不会滚回初始位置，因此这里需加个判断
@@ -309,6 +313,10 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
         mLoadMoreEnable = true;
         this.mOnLoadListener = onLoadListener;
     }
+    public void setmOnLoadListener(LoadListener o){
+        this.loadListener = o;
+    }
+
 
     /**
      * 设置自定义的加载尾部

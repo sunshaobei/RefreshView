@@ -50,7 +50,7 @@
     </android.support.design.widget.CoordinatorLayout>
 
 ```
-###在activity中###
+### 在activity中
 ``` python
 class Main2Activity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -99,20 +99,20 @@ class Main2Activity : AppCompatActivity() {
 }
 ```
 
-##效果##
+## 效果
 - **下拉**
 ![这里写图片描述](http://img.blog.csdn.net/20171030034014320?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzU5NTkyMzE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
 - **上拉**
 ![这里写图片描述](http://img.blog.csdn.net/20171030033935548?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzU5NTkyMzE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
-###1.补充 没有更多数据时 setNoMore(true) ,注意在刷新时恢复setNoMore(false) （我内部没有封装调用刷新接口恢复）
-###2.由于是在nested框架中使用，记得在该控件或者直接父控件上加上layout_behavior属性（不懂的请自学再来使用）否则会乱。
+### 1.补充 没有更多数据时 setNoMore(true) ,注意在刷新时恢复setNoMore(false) （我内部没有封装调用刷新接口恢复）
+### 2.由于是在nested框架中使用，记得在该控件或者直接父控件上加上layout_behavior属性（不懂的请自学再来使用）否则会乱。
 
 ## RefreshNLoadMoreRecyclerView##
 **基本使用**
 
-###在xml中##
+### 在xml中
 ``` python
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -129,7 +129,7 @@ class Main2Activity : AppCompatActivity() {
 
 </RelativeLayout>
 ```
-###在activity中 使用基本与RefreshNLoadMoreNestedLayout一致，只是不需要在获取一个recyclerview RefreshNLoadMoreRecyclerView本身就是个recyclerview###
+### 在activity中 使用基本与RefreshNLoadMoreNestedLayout一致，只是不需要在获取一个recyclerview RefreshNLoadMoreRecyclerView本身就是个recyclerview
 ``` python
 class Main22Activity : AppCompatActivity() {
 
@@ -174,7 +174,7 @@ class Main22Activity : AppCompatActivity() {
 }
 ```
 
-##效果
+## 效果
 - **下拉**
 ![这里写图片描述](http://img.blog.csdn.net/20171030034051552?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzU5NTkyMzE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
@@ -182,9 +182,9 @@ class Main22Activity : AppCompatActivity() {
 ![这里写图片描述](http://img.blog.csdn.net/20171030033935548?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzU5NTkyMzE=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
 
 
-###1）.封装包中除了这两个还有其他几个使用基本类似不做一一介绍，RefreshNAutoLoadMoreNestedLayout、RefreshNAutoLoadMoreRecyclerView以及修改系统SwipeRefreshLayout 支持上拉效果的SwipeRefreshLayout（上拉效果与下拉一致）###
-###2) 刷新实现方式实际是添加两个itemtype head 跟 foot 计算position时注意减去head数与listview类似，LayoutManger需使PTLLinearLayoutManager与PTLGridLayoutManager 二者根本为StaggeredGridLayoutManager，所以使用瀑布流时不变。###
-###3）新增加的四个刷新控件均支持自定义上下拉样式setRefreshViewCreator（RefreshHeaderCreator），setLoadViewCreator（LoadFooterCreator），具体使用如下###
+### 1）.封装包中除了这两个还有其他几个使用基本类似不做一一介绍，RefreshNAutoLoadMoreNestedLayout、RefreshNAutoLoadMoreRecyclerView以及修改系统SwipeRefreshLayout 支持上拉效果的SwipeRefreshLayout（上拉效果与下拉一致）
+### 2) 刷新实现方式实际是添加两个itemtype head 跟 foot 计算position时注意减去head数与listview类似，LayoutManger需使PTLLinearLayoutManager与PTLGridLayoutManager 二者根本为StaggeredGridLayoutManager，所以使用瀑布流时不变。
+### 3）新增加的四个刷新控件均支持自定义上下拉样式setRefreshViewCreator（RefreshHeaderCreator），setLoadViewCreator（LoadFooterCreator），具体使用如下
 ``` python
 /**
  * Created by sunsh on 2017/9/28.
@@ -285,9 +285,9 @@ public class DefaultRefreshHeaderCreator extends RefreshHeaderCreator {
 ```
 **上拉样式与下拉一样继承LoadFooterCreator，不列出了**
 
-##还不会做gif，先凑合静态图吧，等我学会了再配gif上来吧。##
+## 还不会做gif，先凑合静态图吧，等我学会了再配gif上来吧
 
-##AndroidStudio 配置Project Gradle添加jitpack仓库##
+## AndroidStudio 配置Project Gradle添加jitpack仓库
 ``` python
 allprojects {
     repositories {
@@ -296,7 +296,7 @@ allprojects {
     }
 }
 ```
-##在项目Module Gradle 中添加依赖##
+## 在项目Module Gradle 中添加依赖
 ``` python
 compile 'com.github.sunshaobei:Refreshview:3.9'
 ```

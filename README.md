@@ -1,3 +1,8 @@
+# 基本使用
+- **适配material design Android5.0后新增NestedScroll接口RefreshNLoadMoreNestedLayout（适用于CoordinatorLayout）**
+- **普通使用RefreshNLoadMoreRecyclerView**
+
+
 ## RefreshNLoadMoreNestedLayout
 **基本使用**
 ###在xml中

@@ -1,4 +1,4 @@
-package sunsh.customview.refreshview.hfrvnested.PullToRefresh;
+package sunsh.customview.refreshview.hfrv.PullToRefresh;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -20,19 +20,19 @@ import sunsh.customview.refreshview.hfrv.PullToRefresh.RefreshHeaderCreator;
 /**
  * Created by sunsh on 2016/9/19.
  */
-public class PullToRefreshRecyclerView extends HeaderAndFooterRecyclerView {
+public class RefreshRecyclerView4Nested extends HeaderAndFooterRecyclerView {
 
-    public PullToRefreshRecyclerView(Context context) {
+    public RefreshRecyclerView4Nested(Context context) {
         super(context);
         init(context);
     }
 
-    public PullToRefreshRecyclerView(Context context, AttributeSet attrs) {
+    public RefreshRecyclerView4Nested(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public PullToRefreshRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+    public RefreshRecyclerView4Nested(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }

@@ -16,7 +16,6 @@ import sunsh.customview.refreshview.hfrv.PullToLoad.LoadFooterCreator;
 import sunsh.customview.refreshview.hfrv.PullToLoad.LoadListener;
 import sunsh.customview.refreshview.hfrv.PullToLoad.OnLoadListener;
 import sunsh.customview.refreshview.hfrv.PullToLoad.PullToLoadAdapter;
-import sunsh.customview.refreshview.hfrv.PullToRefresh.PullToRefreshRecyclerView;
 
 
 /**

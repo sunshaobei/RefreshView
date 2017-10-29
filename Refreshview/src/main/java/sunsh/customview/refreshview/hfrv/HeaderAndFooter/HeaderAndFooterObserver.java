@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 
-import sunsh.customview.refreshview.hfrv.PullToRefresh.PullToRefreshRecyclerView;
+import sunsh.customview.refreshview.PullToRefreshRecyclerView;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;

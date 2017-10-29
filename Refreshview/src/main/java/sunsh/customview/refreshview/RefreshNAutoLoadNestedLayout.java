@@ -1,4 +1,4 @@
-package sunsh.customview.refreshview.hfrvnested;
+package sunsh.customview.refreshview;
 
 /**
  * Created by sunsh on 2017/9/17.
@@ -35,6 +35,9 @@ import android.support.v4.view.NestedScrollingChildHelper;
 import android.support.v4.view.NestedScrollingParent;
 import android.support.v4.view.NestedScrollingParentHelper;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -48,8 +51,8 @@ import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import sunsh.customview.refreshview.SwipeRefreshLayout;
-import sunsh.customview.refreshview.hfrvnested.PullToRefresh.PullToRefreshRecyclerView;
+import sunsh.customview.refreshview.hfrv.LayoutManager.PTLLinearLayoutManager;
+import sunsh.customview.refreshview.hfrv.PullToRefresh.RefreshRecyclerView4Nested;
 
 
 /**
@@ -73,7 +76,7 @@ import sunsh.customview.refreshview.hfrvnested.PullToRefresh.PullToRefreshRecycl
  * refresh of the content wherever this gesture is used.
  * </p>
  */
-public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScrollingParent,
+public class RefreshNAutoLoadNestedLayout extends LinearLayout implements NestedScrollingParent,
         NestedScrollingChild {
 
     @VisibleForTesting
@@ -90,7 +93,30 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
     private static final int INVALID_POINTER = -1;
     private static final float DRAG_RATE = .5f;
 
+    // Max amount of circle that can be filled by progress during swipe gesture,
+    // where 1.0 is a full circle
+    private static final float MAX_PROGRESS_ANGLE = .8f;
+
+    private static final int SCALE_DOWN_DURATION = 150;
+
+    private static final int ALPHA_ANIMATION_DURATION = 300;
+
+    private static final int ANIMATE_TO_TRIGGER_DURATION = 200;
+
+    private static final int ANIMATE_TO_START_DURATION = 200;
+
+    // Default background for the progress spinner
+    private static final int CIRCLE_BG_LIGHT = 0xFFFAFAFA;
+    // Default offset in dips from the top of the view to where the progress spinner should stop
+    private static final int DEFAULT_CIRCLE_TARGET = 64;
+
     private View mTarget; // the target of the gesture
+    OnRefreshListener mListener;
+
+    OnBottomRefreshListener mListenerBottom;
+
+
+    ScrollView s;
 
     private int mTouchSlop;
 
@@ -115,7 +141,18 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
     private float mInitialDownY;
     private boolean mIsBeingDragged;
     private int mActivePointerId = INVALID_POINTER;
+    // Whether this item is scaled up rather than clipped
+    /**
+     * 如果在z轴它的上面没有东西，那么为true
+     */
+    boolean mScale;
 
+    // Target is returning to its start offset because it was cancelled or a
+    // refresh was triggered.
+    /**
+     * 是否正在返回底部
+     */
+    private boolean mReturningToEnd;
     private final DecelerateInterpolator mDecelerateInterpolator;
     private static final int[] LAYOUT_ATTRS = new int[]{
             android.R.attr.enabled
@@ -125,25 +162,50 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
     private OnChildScrollUpCallback mChildScrollUpCallback;
 
 
+    Handler hd = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Log.d("fish", "getMessageName=" + msg.what);
+            reset();
+            super.handleMessage(msg);
+        }
+    };
+
     //add
     private boolean mBottomIsScrolling;
+
+    public void setRefreshEnable(boolean b) {
+        this.canRefresh = b;
+    }
+
+    public void setLoadMoreEnable(boolean b) {
+        this.canLoadMore = b;
+    }
+
+
+    /**
+     * 重设状态，将circle隐藏起来
+     */
+    void reset() {
+        //TODO
+    }
 
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+        if (!enabled) {
+            reset();
+        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        reset();
     }
 
-    public RefreshNLoadNestedLayout(Context context) {
+    public RefreshNAutoLoadNestedLayout(Context context) {
         this(context, null);
-    }
-
-    public RefreshNLoadNestedRecyclerView getBasseRV(){
-        return getLoadMore();
     }
 
     /**
@@ -152,11 +214,11 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
      * @param context
      * @param attrs
      */
-    public RefreshNLoadNestedLayout(Context context, AttributeSet attrs) {
+    public RefreshNAutoLoadNestedLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        RefreshNLoadNestedRecyclerView pullToLoadRecyclerView = new RefreshNLoadNestedRecyclerView(context);
-        pullToLoadRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        this.addView(pullToLoadRecyclerView);
+        RefreshNAutoLoadNestedRecyclerView autoLoadRecyclerView = new RefreshNAutoLoadNestedRecyclerView(context);
+        autoLoadRecyclerView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        this.addView(autoLoadRecyclerView);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
         setWillNotDraw(false);
         mDecelerateInterpolator = new DecelerateInterpolator(DECELERATE_INTERPOLATION_FACTOR);
@@ -179,9 +241,27 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         a.recycle();
     }
 
-    public RefreshNLoadNestedRecyclerView getRv() {
-        return getLoadMore();
+    public void setAdapter(RecyclerView.Adapter adapter){
+        getLoadMore().setAdapter(adapter);
     }
+    public void setLayoutManager(RecyclerView.LayoutManager manager){
+        if (manager instanceof LinearLayoutManager) getLoadMore().setLayoutManager(new PTLLinearLayoutManager());
+        if (manager instanceof GridLayoutManager) getLoadMore().setLayoutManager(new PTLLinearLayoutManager());
+    }
+
+    /**
+     * Set the listener to be notified when a refresh is triggered via the swipe
+     * gesture.
+     */
+    public void setOnRefreshListener(OnRefreshListener listener) {
+        mListener = listener;
+    }
+
+
+    public void setOnBottomRefreshListenrer(OnBottomRefreshListener listener) {
+        mListenerBottom = listener;
+    }
+
 
     /**
      * Pre API 11, alpha is used to make the progress circle appear instead of scale.
@@ -207,22 +287,12 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
             getRefresh().completeRefresh();
         }
     }
-
-    public void setBottomRefreshing(boolean refreshing, int loadCount) {
-        if (refreshing) {
-            getLoadMore().FsetState(getLoadMore().mLoadViewHeight);
-        } else {
-            getLoadMore().completeLoad(loadCount);
-        }
-    }
-
-
     /**
      * @return Whether the SwipeRefreshWidget is actively showing refresh
      * progress.
      */
     public boolean isRefreshing() {
-        return getRefresh().HmState == PullToRefreshRecyclerView.STATE_REFRESHING;
+        return getRefresh().HmState == RefreshRecyclerView4Nested.STATE_REFRESHING;
     }
 
     /**
@@ -237,13 +307,104 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         }
     }
 
+//    @Override
+//    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+//        final int width = getMeasuredWidth();
+//        final int height = getMeasuredHeight();
+//        if (getChildCount() == 0) {
+//            return;
+//        }
+//        if (mTarget == null) {
+//            ensureTarget();
+//        }
+//        if (mTarget == null) {
+//            return;
+//        }
+//        final View child = mTarget;
+//        final int childLeft = getPaddingLeft();
+//        final int childTop = getPaddingTop();
+//        final int childWidth = width - getPaddingLeft() - getPaddingRight();
+//        final int childHeight = height - getPaddingTop() - getPaddingBottom();
+//        child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+//        Log.e(LOG_TAG,"onLayout,childTop=="+childTop+",childHeight"+childHeight);
+//        //草，就是因为这个，才会滚不回去，在重绘的过程中会进行新一次的onLayout
+//       /* if(firstMeasure) {//其实已经没有必要摆在这里了
+//            //  mOriginalOffsetBottom = height + mCircleDiameter;
+//            //mOriginalOffsetBottom = 1250;
+//            mCurrentTargetOffsetBottom = mOriginalOffsetBottom;
+//            mSpinnerBottomOffsetEnd = mOriginalOffsetBottom - mSpinnerOffsetEnd;
+//            firstMeasure = false;
+//            Log.e("fish", "firstMeasure,mCurrentTargetOffsetBottom==" + mCurrentTargetOffsetBottom + ",mSpinnerBottomOffsetEnd==" + mSpinnerBottomOffsetEnd);
+//            Log.e("fish", "firstMeasure,mOriginalOffsetBottom==" + mOriginalOffsetBottom);
+//        }*/
+//
+//        int circleWidth = mCircleView.getMeasuredWidth();
+//        int circleHeight = mCircleView.getMeasuredHeight();
+//        mCircleView.layout((width / 2 - circleWidth / 2), mCurrentTargetOffsetTop,
+//                (width / 2 + circleWidth / 2), mCurrentTargetOffsetTop + circleHeight);
+////        mCircleView.layout((width / 2 - circleWidth / 2), childHeight/2,
+////                     (width / 2 + circleWidth / 2), childHeight/2 + circleHeight);
+//
+//      // mCurrentTargetOffsetBottom = mOriginalOffsetBottom;
+//        int circleBottomWidth = mCircleViewBottom.getMeasuredWidth();
+//        int circleBottomHeight = mCircleViewBottom.getMeasuredHeight();
+//        mCircleViewBottom.setVisibility(View.VISIBLE);
+//        mCircleViewBottom.layout((width / 2 - circleBottomWidth / 2), mCurrentTargetOffsetBottom - circleBottomHeight,
+//                (width / 2 + circleBottomWidth / 2), mCurrentTargetOffsetBottom);
+//      //  mProgressBottom.start();
+//    }
+//
+//    @Override
+//    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+//        if (mTarget == null) {
+//            ensureTarget();
+//        }
+//        if (mTarget == null) {
+//            return;
+//        }
+//        mTarget.measure(MeasureSpec.makeMeasureSpec(
+//                getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
+//                MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
+//                getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
+//        mCircleView.measure(MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY),
+//                MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY));
+//        mCircleViewIndex = -1;
+//        // Get the index of the circleview.
+//        for (int index = 0; index < getChildCount(); index++) {
+//            if (getChildAt(index) == mCircleView) {
+//                mCircleViewIndex = index;
+//                Log.e(LOG_TAG,"mCircleViewIndex=="+mCircleViewIndex);
+//                break;
+//            }
+//        }
+//
+//       mCircleViewBottom.measure(MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY),
+//                MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY));
+//        mCircleViewBottomIndex = -1;
+//        // Get the index of the circleview.
+//        for (int index = 0; index < getChildCount(); index++) {
+//            if (getChildAt(index) == mCircleViewBottom) {
+//                mCircleViewBottomIndex = index;
+//                Log.e(LOG_TAG,"mCircleViewBottomIndex=="+mCircleViewBottomIndex);
+//                break;
+//            }
+//        }
+//
+//
+//    }
 
+
+    boolean canLoadMore = true;
 
     /**
      * @return Whether it is possible for the child view of this layout to
      * scroll up. Override this if the child view is a custom view.
      */
     public boolean canChildScrollUp() {
+
+        if (!canLoadMore) return false;
+
         if (mChildScrollUpCallback != null) {
             Log.e("fish", "canChildScrollUp;mChildScrollUpCallback != null");
             return mChildScrollUpCallback.canChildScrollUp(this, mTarget);
@@ -270,13 +431,15 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         }
     }
 
+
+    boolean canRefresh = true;
     //自己写的方法
 
     /**
      * 判断是否而已向下拉
      */
     public boolean canChildScrollDown() {
-        return ViewCompat.canScrollVertically(mTarget, 1);
+        return canRefresh && ViewCompat.canScrollVertically(mTarget, 1);
     }
 
 
@@ -303,7 +466,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
          * canChildScrollUp 子view还可以向上拉
          * */
         if (!isEnabled() || canChildScrollUp()
-                || getRefresh().HmState == PullToRefreshRecyclerView.STATE_REFRESHING || mNestedScrollInProgress) {
+                || getRefresh().HmState == RefreshRecyclerView4Nested.STATE_REFRESHING || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
             return false;
         }
@@ -374,7 +537,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         //child 包含target的直接子view
         //返回true表示要与target配套滑动，为true则下面的accepted也会被调用
         //mReturningToStart是为了配合onTouchEvent的，这里我们不扩展
-        return isEnabled() && getRefresh().HmState == PullToRefreshRecyclerView.STATE_DEFAULT && getLoadMore().FmState == RefreshNLoadNestedRecyclerView.STATE_DEFAULT //没有在刷新和返回途中
+        return isEnabled() && getRefresh().HmState == RefreshRecyclerView4Nested.STATE_DEFAULT && !getLoadMore().mIsLoading //没有在刷新和返回途中
                 && (nestedScrollAxes & ViewCompat.SCROLL_AXIS_VERTICAL) != 0;//竖直方向
     }
 
@@ -401,7 +564,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         // If we are in the middle of consuming, a scroll, then we want to move the spinner back up
         // before allowing the list to scroll
         Log.e(LOG_TAG, "onNestedPreScroll,dy=" + dy + ",consume[1]==" + consumed[1]);
-        if (dy > 0 && mTotalUnconsumed > 0 && getRefresh().HmState != PullToRefreshRecyclerView.STATE_REFRESHING) {//向下拖dy小于0，所以这是为了处理拖circle到一半然后又缩回去的情况
+        if (dy > 0 && mTotalUnconsumed > 0 && getRefresh().HmState != RefreshRecyclerView4Nested.STATE_REFRESHING) {//向下拖dy小于0，所以这是为了处理拖circle到一半然后又缩回去的情况
             if (dy > mTotalUnconsumed) {//拖动的很多，大于未消费的
                 consumed[1] = dy - (int) mTotalUnconsumed;
                 mTotalUnconsumed = 0;
@@ -413,19 +576,19 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         }
 
         //处理底部的,圆圈已经出来了之后它又向下拖
-        if (dy < 0 && mTotalUnconsumedBottom > 0 && getLoadMore().FmState != RefreshNLoadNestedRecyclerView.STATE_LOADING) {
-            Log.e("fish", "dy<0 && mTotalUnconsumedBottom > 0+++dy==" + dy + ",mTotalUnconsumedBottom==" + mTotalUnconsumedBottom);
-            if (-dy > mTotalUnconsumedBottom)//如果拖动的很多，就先给圆圈，然后还给子控件
-            {
-                consumed[1] = -(int) mTotalUnconsumedBottom;
-                mTotalUnconsumedBottom = 0;
-                mBottomIsScrolling = false;
-            } else {//否则，先给父控件
-                mTotalUnconsumedBottom += (dy);
-                consumed[1] = dy;//原来传回去的是正数，结果越滑越快。。。改成负数之后就对了，开心
-            }
-            moveBottomSpinner(mTotalUnconsumedBottom);
-        }
+//        if (dy < 0 && mTotalUnconsumedBottom > 0 && !getLoadMore().mIsLoading ){
+//            Log.e("fish", "dy<0 && mTotalUnconsumedBottom > 0+++dy==" + dy + ",mTotalUnconsumedBottom==" + mTotalUnconsumedBottom);
+//            if (-dy > mTotalUnconsumedBottom)//如果拖动的很多，就先给圆圈，然后还给子控件
+//            {
+//                consumed[1] = -(int) mTotalUnconsumedBottom;
+//                mTotalUnconsumedBottom = 0;
+//                mBottomIsScrolling = false;
+//            } else {//否则，先给父控件
+//                mTotalUnconsumedBottom += (dy);
+//                consumed[1] = dy;//原来传回去的是正数，结果越滑越快。。。改成负数之后就对了，开心
+//            }
+//            moveBottomSpinner(mTotalUnconsumedBottom);
+//        }
 
         // Now let our nested parent consume the leftovers
         /**计算它的父层的消耗，加上去*/
@@ -452,12 +615,12 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
             finishSpinner(mTotalUnconsumed);
             mTotalUnconsumed = 0;
         }
-        if (mTotalUnconsumedBottom > 0 && getRefresh().HmState != PullToRefreshRecyclerView.STATE_REFRESHING) {
-            Log.e("fish", "onStopNestedScroll,mTotalUnconsumedBottom > 0");
-            finishSpinnerBottom(mTotalUnconsumedBottom);
-            mTotalUnconsumedBottom = 0;
-            mBottomIsScrolling = false;
-        }
+//        if (mTotalUnconsumedBottom > 0 && getRefresh().HmState != PullToRefreshRecyclerView.STATE_REFRESHING) {
+//            Log.e("fish", "onStopNestedScroll,mTotalUnconsumedBottom > 0");
+//            finishSpinnerBottom(mTotalUnconsumedBottom);
+//            mTotalUnconsumedBottom = 0;
+//            mBottomIsScrolling = false;
+//        }
         // Dispatch up our nested parent
         stopNestedScroll();
     }
@@ -481,12 +644,13 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         if (dy < 0 && !canChildScrollUp()) {//向下拉
             mTotalUnconsumed += Math.abs(dy);
             moveSpinner(mTotalUnconsumed);
-        } else if (dy > 0 && !canChildScrollDown()) //向上拉
-        {
-            mTotalUnconsumedBottom += (dy * 4);
-            moveBottomSpinner(mTotalUnconsumedBottom);
-            mBottomIsScrolling = true;
         }
+//        else if (dy > 0 && !canChildScrollDown()) //向上拉
+//        {
+//            mTotalUnconsumedBottom += (dy * 4);
+//            moveBottomSpinner(mTotalUnconsumedBottom);
+//            mBottomIsScrolling = true;
+//        }
     }
 
     // NestedScrollingChild
@@ -566,18 +730,18 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
     public boolean dispatchNestedPreScroll(int dx, int dy, int[] consumed, int[] offsetInWindow) {
         Log.e("fish", "父：dispatchNestedPreScroll,dy=" + dy);
         //先拦截
-        if (mBottomIsScrolling && mTotalUnconsumedBottom > 0 && dy < 0)//设置成功！但是子view还在动
-        {
-            Log.e("fish", "父：dispatchNestedPreScroll,mTotalUnconsumedBottom=" + mTotalUnconsumedBottom + ",dy==" + dy);
-            if (-dy >= mTotalUnconsumedBottom)//向下拖动很大
-            {
-                moveBottomSpinner(mTotalUnconsumedBottom);
-            } else {
-                moveBottomSpinner(-dy);
-                mTotalUnconsumedBottom -= dy;
-                dy = 0;
-            }
-        }
+//        if (mBottomIsScrolling && mTotalUnconsumedBottom > 0 && dy < 0)//设置成功！但是子view还在动
+//        {
+//            Log.e("fish", "父：dispatchNestedPreScroll,mTotalUnconsumedBottom=" + mTotalUnconsumedBottom + ",dy==" + dy);
+//            if (-dy >= mTotalUnconsumedBottom)//向下拖动很大
+//            {
+//                moveBottomSpinner(mTotalUnconsumedBottom);
+//            } else {
+//                moveBottomSpinner(-dy);
+//                mTotalUnconsumedBottom -= dy;
+//                dy = 0;
+//            }
+//        }
         return mNestedScrollingChildHelper.dispatchNestedPreScroll(
                 dx, dy, consumed, offsetInWindow);
     }
@@ -609,22 +773,13 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
     }
 
 
-    /**
-     * 进行实际circle的滑动绘制，包括颜色等设置
-     *
-     * @param overscrollTop 滑动的绝对值
-     */
-    private void moveBottomSpinner(float overscrollTop) {
-        if (getLoadMore().getChildCount() < getLoadMore().getAdapter().getItemCount())
-            getLoadMore().FsetState(overscrollTop);
+
+    private RefreshRecyclerView4Nested getRefresh() {
+        return ((RefreshRecyclerView4Nested) getChildAt(0));
     }
 
-    private PullToRefreshRecyclerView getRefresh() {
-        return ((PullToRefreshRecyclerView) getChildAt(0));
-    }
-
-    private RefreshNLoadNestedRecyclerView getLoadMore() {
-        return ((RefreshNLoadNestedRecyclerView) getChildAt(0));
+    private RefreshNAutoLoadNestedRecyclerView getLoadMore() {
+        return ((RefreshNAutoLoadNestedRecyclerView) getChildAt(0));
     }
 
 
@@ -639,14 +794,6 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         getRefresh().HreplyPull();
     }
 
-    /**
-     * 结束下半部的spinner
-     */
-    private void finishSpinnerBottom(float overscrollTop) {//在小于mTotalDragDistance的时候处理的不好，会在中间停止
-        getLoadMore().FreplyPull();
-    }
-
-
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         final int action = MotionEventCompat.getActionMasked(ev);
@@ -654,7 +801,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
 
         Log.e("fish", "-onTouchEvent-;ACTION==" + ev.getAction());
         if (!isEnabled() || canChildScrollUp()
-                || getRefresh().HmState == PullToRefreshRecyclerView.STATE_DEFAULT || mNestedScrollInProgress) {
+                || getRefresh().HmState == RefreshRecyclerView4Nested.STATE_DEFAULT || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
             return false;
         }
@@ -679,7 +826,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
 
                 if (mIsBeingDragged) {
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
-                    if (overscrollTop > 0 && getLoadMore().FmState != RefreshNLoadNestedRecyclerView.STATE_LOADING) {
+                    if (overscrollTop > 0 && getLoadMore().mIsLoading) {
                         moveSpinner(overscrollTop * 2);
                     } else {
                         return false;
@@ -705,7 +852,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
                 break;
 
             case MotionEvent.ACTION_UP: {
-                ((PullToRefreshRecyclerView) getChildAt(0)).HreplyPull();
+                ((RefreshRecyclerView4Nested) getChildAt(0)).HreplyPull();
                 Log.e("fish", "-onTouchEvent-;MotionEvent.ACTION_UP");
                 pointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
@@ -713,7 +860,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
                     return false;
                 }
 
-                if (mIsBeingDragged && getLoadMore().FmState != RefreshNLoadNestedRecyclerView.STATE_LOADING) {
+                if (mIsBeingDragged && !getLoadMore().mIsLoading) {
                     final float y = ev.getY(pointerIndex);
                     final float overscrollTop = (y - mInitialMotionY) * DRAG_RATE;
                     mIsBeingDragged = false;
@@ -791,6 +938,6 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
          * @param child  The child view of GZoomSwifrefresh.
          * @return Whether it is possible for the child view of parent layout to scroll up.
          */
-        boolean canChildScrollUp(RefreshNLoadNestedLayout parent, @Nullable View child);
+        boolean canChildScrollUp(RefreshNAutoLoadNestedLayout parent, @Nullable View child);
     }
 }

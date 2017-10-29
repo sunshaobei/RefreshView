@@ -1,4 +1,4 @@
-package sunsh.customview.refreshview.hfrv.PullToRefresh;
+package sunsh.customview.refreshview;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -15,7 +15,9 @@ import android.view.ViewGroup;
 
 import sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator.DefaultRefreshHeaderCreator;
 import sunsh.customview.refreshview.hfrv.HeaderAndFooter.HeaderAndFooterRecyclerView;
-import sunsh.customview.refreshview.hfrvnested.RefreshNLoadNestedLayout;
+import sunsh.customview.refreshview.RefreshNLoadNestedLayout;
+import sunsh.customview.refreshview.hfrv.PullToRefresh.OnRefreshListener;
+import sunsh.customview.refreshview.hfrv.PullToRefresh.RefreshHeaderCreator;
 
 
 /**

@@ -1,4 +1,4 @@
-package sunsh.customview.refreshview.hfrv.AutoLoad;
+package sunsh.customview.refreshview;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -9,7 +9,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
 import android.view.View;
 
-import sunsh.customview.refreshview.hfrv.PullToRefresh.PullToRefreshRecyclerView;
+import sunsh.customview.refreshview.hfrv.AutoLoad.AutoLoadAdapter;
+import sunsh.customview.refreshview.hfrv.AutoLoad.AutoLoadFooterCreator;
 import sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator.DefaultAutoLoadFooterCreator;
 import sunsh.customview.refreshview.hfrv.PullToLoad.OnLoadListener;
 
@@ -17,19 +18,19 @@ import sunsh.customview.refreshview.hfrv.PullToLoad.OnLoadListener;
 /**
  * Created by Administrator on 2016/9/26.
  */
-public class AutoLoadRecyclerView extends PullToRefreshRecyclerView {
+public class RefreshNAutoLoadRecyclerView extends PullToRefreshRecyclerView {
 
-    public AutoLoadRecyclerView(Context context) {
+    public RefreshNAutoLoadRecyclerView(Context context) {
         super(context);
         init(context);
     }
 
-    public AutoLoadRecyclerView(Context context, AttributeSet attrs) {
+    public RefreshNAutoLoadRecyclerView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public AutoLoadRecyclerView(Context context, AttributeSet attrs, int defStyle) {
+    public RefreshNAutoLoadRecyclerView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }

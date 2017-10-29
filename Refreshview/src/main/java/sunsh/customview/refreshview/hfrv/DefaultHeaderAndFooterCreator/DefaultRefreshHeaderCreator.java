@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import sunsh.customview.refreshview.R;
-import sunsh.customview.refreshview.hfrv.PullToRefresh.PullToRefreshRecyclerView;
+import sunsh.customview.refreshview.PullToRefreshRecyclerView;
 import sunsh.customview.refreshview.hfrv.PullToRefresh.RefreshHeaderCreator;
 
 

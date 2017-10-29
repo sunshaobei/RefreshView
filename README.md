@@ -39,7 +39,7 @@
                 android:background="#f5f566" />
         </android.support.design.widget.AppBarLayout>
 
-        <sunsh.customview.refreshview.hfrvnested.RefreshNLoadNestedLayout
+        <sunsh.customview.refreshview.RefreshNLoadNestedLayout
             android:id="@+id/refresh_loadmore_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

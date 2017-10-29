@@ -1,4 +1,4 @@
-package sunsh.customview.refreshview.hfrvnested;
+package sunsh.customview.refreshview;
 
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -10,18 +10,18 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import sunsh.customview.refreshview.hfrvnested.DefaultHeaderAndFooterCreator.DefaultLoadFooterCreator;
-import sunsh.customview.refreshview.hfrvnested.PullToLoad.LoadFooterCreator;
-import sunsh.customview.refreshview.hfrvnested.PullToLoad.LoadListener;
-import sunsh.customview.refreshview.hfrvnested.PullToLoad.OnLoadListener;
-import sunsh.customview.refreshview.hfrvnested.PullToLoad.PullToLoadAdapter;
-import sunsh.customview.refreshview.hfrvnested.PullToRefresh.PullToRefreshRecyclerView;
+import sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator.DefaultLoadFooterCreator;
+import sunsh.customview.refreshview.hfrv.PullToLoad.LoadFooterCreator;
+import sunsh.customview.refreshview.hfrv.PullToLoad.LoadListener;
+import sunsh.customview.refreshview.hfrv.PullToLoad.OnLoadListener;
+import sunsh.customview.refreshview.hfrv.PullToLoad.PullToLoadAdapter;
+import sunsh.customview.refreshview.hfrv.PullToRefresh.RefreshRecyclerView4Nested;
 
 
 /**
  * Created by sunsh on 2016/9/21.
  */
-public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
+public class RefreshNLoadNestedRecyclerView extends RefreshRecyclerView4Nested {
     public RefreshNLoadNestedRecyclerView(Context context) {
         super(context);
         init(context);

@@ -274,7 +274,7 @@ public class RefreshNLoadNestedRecyclerView extends RefreshRecyclerView4Nested {
         this.mOnLoadListener = onLoadListener;
     }
 
-    public void setmOnLoadListener(LoadListener o) {
+    public void setOnLoadListener(LoadListener o) {
         mLoadMoreEnable = true;
         this.loadListener = o;
     }

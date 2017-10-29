@@ -357,16 +357,20 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
                 setLayoutParams(marginLayoutParams);
                 if (mNomoreItemView==null){
                     mNomoreItemView = LayoutInflater.from(getContext()).inflate(R.layout.hfrv_nomoreitem,null);
-                    mAdapter.addFooterView(mNomoreItemView);
-                };
+                }else mAdapter.removeFooterView(mNomoreItemView);
+                mAdapter.addFooterView(mNomoreItemView);
             }
         } else if (mLoadView != null) {
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
             marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mLoadViewHeight - 1);
             setLayoutParams(marginLayoutParams);
-            if (mNomoreItemView!=null) mAdapter.removeFooterView(mNomoreItemView);
             mAdapter.setLoadView(mLoadView);
+            if (mNomoreItemView!=null) mAdapter.removeFooterView(mNomoreItemView);
         }
+    }
+
+    public void setmNomoreItemView(View v) {
+        mNomoreItemView = v;
     }
 
     /**

@@ -7,11 +7,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import sunsh.customview.refreshview.hfrv.AutoLoad.AutoLoadAdapter;
 import sunsh.customview.refreshview.hfrv.AutoLoad.AutoLoadFooterCreator;
 import sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator.DefaultAutoLoadFooterCreator;
+import sunsh.customview.refreshview.hfrv.PullToLoad.LoadListener;
 import sunsh.customview.refreshview.hfrv.PullToLoad.OnLoadListener;
 
 
@@ -40,12 +42,15 @@ public class RefreshNAutoLoadRecyclerView extends PullToRefreshRecyclerView {
     private Adapter mRealAdapter;
 
     private boolean mIsLoading = false;
-    private boolean mLoadMoreEnable = true;
+    private boolean mLoadMoreEnable = false;
     private boolean mNoMore = false;
     private View mNoMoreView;
+    //没有更多  提示view
+    private View mNomoreItemView;
 
     private AutoLoadFooterCreator mAutoLoadFooterCreator;
     private OnLoadListener mOnLoadListener;
+    private LoadListener loadListener;
 
 
     private void init(Context context) {
@@ -110,6 +115,8 @@ public class RefreshNAutoLoadRecyclerView extends PullToRefreshRecyclerView {
                 mIsLoading = true;
                 if (mOnLoadListener != null)
                     mOnLoadListener.onStartLoading(mRealAdapter.getItemCount());
+                if (loadListener != null)
+                    loadListener.onLoad();
             }
         }
     }
@@ -139,16 +146,32 @@ public class RefreshNAutoLoadRecyclerView extends PullToRefreshRecyclerView {
         mIsLoading = false;
         mNoMore = noMore;
         if (mNoMore) {
-            if (mNoMoreView != null)
+            if (mNoMoreView != null){
                 mAdapter.setLoadView(mNoMoreView);
-        }
-        else if (mLoadView != null)
+                if (mNomoreItemView == null) {
+                    mNomoreItemView = LayoutInflater.from(getContext()).inflate(R.layout.hfrv_nomoreitem, null);
+                } else mAdapter.removeFooterView(mNomoreItemView);
+                mAdapter.addFooterView(mNomoreItemView);
+            }
+        } else if (mLoadView != null){
             mAdapter.setLoadView(mLoadView);
+            if (mNomoreItemView!=null) mAdapter.removeFooterView(mNomoreItemView);
+        }
+    }
+
+    public void setmNomoreItemView(View v){
+        this.mNomoreItemView = v;
     }
 
     /**设置加载监听*/
     public void setOnLoadListener(OnLoadListener onLoadListener) {
+        this.mLoadMoreEnable = true;
         this.mOnLoadListener = onLoadListener;
+    }
+    /**设置加载监听*/
+    public void setOnLoadListener(LoadListener o) {
+        this.mLoadMoreEnable = true;
+        this.loadListener = o;
     }
 
     /**获得加载中View和底部填充view的个数，用于绘制分割线*/

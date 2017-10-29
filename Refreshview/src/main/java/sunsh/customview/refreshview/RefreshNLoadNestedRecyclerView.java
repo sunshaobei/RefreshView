@@ -311,19 +311,23 @@ public class RefreshNLoadNestedRecyclerView extends RefreshRecyclerView4Nested {
                 ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
                 marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mNoMoreView.getLayoutParams().height - 1);
                 setLayoutParams(marginLayoutParams);
-                if (mNomoreItemView==null){
-                    mNomoreItemView = LayoutInflater.from(getContext()).inflate(R.layout.hfrv_nomoreitem,null);
-                    mAdapter.addFooterView(mNomoreItemView);
-                };
+                if (mNomoreItemView == null) {
+                    mNomoreItemView = LayoutInflater.from(getContext()).inflate(R.layout.hfrv_nomoreitem, null);
+                } else mAdapter.removeFooterView(mNomoreItemView);
+                mAdapter.addFooterView(mNomoreItemView);
             }
         } else if (mLoadView != null) {
             mAdapter.setLoadView(mLoadView);
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
             marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mLoadViewHeight - 1);
             setLayoutParams(marginLayoutParams);
-            if (mNomoreItemView!=null) mAdapter.removeFooterView(mNomoreItemView);
             mAdapter.setLoadView(mLoadView);
+            if (mNomoreItemView != null) mAdapter.removeFooterView(mNomoreItemView);
         }
+    }
+
+    public void setmNomoreItemView(View v) {
+        mNomoreItemView = v;
     }
 
     /**

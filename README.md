@@ -183,7 +183,8 @@ class Main22Activity : AppCompatActivity() {
 
 
 ###1）.封装包中除了这两个还有其他几个使用基本类似不做一一介绍，RefreshNAutoLoadMoreNestedLayout、RefreshNAutoLoadMoreRecyclerView以及修改系统SwipeRefreshLayout 支持上拉效果的SwipeRefreshLayout（上拉效果与下拉一致）
-###2）新增加的四个刷新控件均支持自定义上下拉样式setRefreshViewCreator（RefreshHeaderCreator），setLoadViewCreator（LoadFooterCreator），具体使用如下
+###2) 刷新实现方式实际是添加两个itemtype head 跟 foot 计算position时注意减去head数与listview类似，LayoutManger需使PTLLinearLayoutManager与PTLGridLayoutManager 二者根本为StaggeredGridLayoutManager，所以使用瀑布流时不变。
+###3）新增加的四个刷新控件均支持自定义上下拉样式setRefreshViewCreator（RefreshHeaderCreator），setLoadViewCreator（LoadFooterCreator），具体使用如下
 ``` python
 /**
  * Created by sunsh on 2017/9/28.

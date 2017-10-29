@@ -106,7 +106,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         if (mLoadView != null && mLoadViewHeight == 0) {
-            mLoadView.measure(0,0);
+            mLoadView.measure(0, 0);
             mLoadViewHeight = mLoadView.getLayoutParams().height;
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
             marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, marginLayoutParams.bottomMargin - mLoadViewHeight - 1);
@@ -123,7 +123,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
         super.onDraw(c);
         if (mLoadView == null) return;
 //        若数据不满一屏
-        if(getAdapter() == null) return;
+        if (getAdapter() == null) return;
         if (getChildCount() >= getAdapter().getItemCount()) {
             if (mLoadView.getVisibility() != GONE) {
                 mLoadView.setVisibility(GONE);
@@ -168,7 +168,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
                     else
                         break;
                 }
-                float distance = (int) ((mFirstY - e.getRawY())* mLoadRatio);
+                float distance = (int) ((mFirstY - e.getRawY()) * mLoadRatio);
 //                若向上滑动(此时加载胃部已隐藏)，不处理
                 if (distance < 0) break;
                 mPulling = true;
@@ -198,6 +198,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
      * 刷新中不在此处判断，在手指抬起时才判断
      */
     private int lastState;
+
     private void setState(float distance) {
 //        刷新中/没有更多，状态不变
         if (mState == STATE_LOADING || mState == STATE_NO_MORE) {
@@ -210,7 +211,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
             lastState = mState;
             mState = STATE_RELEASE_TO_LOAD;
             if (mLoadFooterCreator != null)
-                if (!mLoadFooterCreator.onReleaseToLoad(distance,lastState))
+                if (!mLoadFooterCreator.onReleaseToLoad(distance, lastState))
                     return;
         }
 //        正在拖动
@@ -218,7 +219,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
             lastState = mState;
             mState = STATE_PULLING;
             if (mLoadFooterCreator != null)
-                if (!mLoadFooterCreator.onStartPull(distance,lastState))
+                if (!mLoadFooterCreator.onStartPull(distance, lastState))
                     return;
         }
         startPull(distance);
@@ -229,6 +230,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
      * 拖动或回弹时，改变低部的margin
      */
     private ViewGroup.LayoutParams layoutParams;
+
     private void startPull(float distance) {
 //            该view的高度不能为0，否则将无法判断是否已滑动到底部
         if (distance < 1)
@@ -298,7 +300,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
         mAdapter.notifyItemRangeInserted(startItem, loadItemCount);
     }
 
-    public void completeLoad(){
+    public void completeLoad() {
         if (mLoadFooterCreator != null)
             mLoadFooterCreator.onStopLoad();
         mState = STATE_DEFAULT;
@@ -313,7 +315,9 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
         mLoadMoreEnable = true;
         this.mOnLoadListener = onLoadListener;
     }
-    public void setmOnLoadListener(LoadListener o){
+
+    public void setmOnLoadListener(LoadListener o) {
+        mLoadMoreEnable = true;
         this.loadListener = o;
     }
 
@@ -326,7 +330,7 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
             throw new IllegalArgumentException("the LoadViewCreator must not be null");
         } else {
             this.mLoadFooterCreator = loadViewCreator;
-            mLoadView = loadViewCreator.getLoadView(getContext(),this);
+            mLoadView = loadViewCreator.getLoadView(getContext(), this);
             if (mAdapter != null) {
                 mAdapter.setLoadView(mLoadView);
             }
@@ -345,19 +349,20 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
 //                重新测量底部
                 mNoMoreView.measure(0, 0);
                 ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
-                marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin,-mNoMoreView.getLayoutParams().height-1);
+                marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mNoMoreView.getLayoutParams().height - 1);
                 setLayoutParams(marginLayoutParams);
             }
-        }
-        else if (mLoadView != null) {
+        } else if (mLoadView != null) {
             mAdapter.setLoadView(mLoadView);
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
-            marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin,-mLoadViewHeight-1);
+            marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mLoadViewHeight - 1);
             setLayoutParams(marginLayoutParams);
         }
     }
 
-    /**获得加载中View和底部填充view的个数，用于绘制分割线*/
+    /**
+     * 获得加载中View和底部填充view的个数，用于绘制分割线
+     */
     public int getLoadViewCount() {
         if (mLoadView != null)
             return 2;
@@ -368,14 +373,18 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
         this.mLoadMoreEnable = loadMoreEnable;
     }
 
-    /**获得真正的adapter*/
+    /**
+     * 获得真正的adapter
+     */
     @Override
     public Adapter getRealAdapter() {
         return mRealAdapter;
     }
 
 
-    /**设置下拉阻尼系数*/
+    /**
+     * 设置下拉阻尼系数
+     */
     public void setPullLoadRatio(float loadRatio) {
         this.mLoadRatio = loadRatio;
     }

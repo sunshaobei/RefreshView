@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import sunsh.customview.refreshview.hfrvnested.DefaultHeaderAndFooterCreator.DefaultLoadFooterCreator;
 import sunsh.customview.refreshview.hfrvnested.PullToLoad.LoadFooterCreator;
+import sunsh.customview.refreshview.hfrvnested.PullToLoad.LoadListener;
 import sunsh.customview.refreshview.hfrvnested.PullToLoad.OnLoadListener;
 import sunsh.customview.refreshview.hfrvnested.PullToLoad.PullToLoadAdapter;
 import sunsh.customview.refreshview.hfrvnested.PullToRefresh.PullToRefreshRecyclerView;
@@ -66,6 +67,7 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
     private ValueAnimator valueAnimator;
     //    加载监听
     private OnLoadListener mOnLoadListener;
+    private LoadListener loadListener;
     //  加载
     private LoadFooterCreator mLoadFooterCreator;
 
@@ -103,7 +105,7 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         if (mLoadView != null && mLoadViewHeight == 0) {
-            mLoadView.measure(0,0);
+            mLoadView.measure(0, 0);
             mLoadViewHeight = mLoadView.getLayoutParams().height;
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
             marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, marginLayoutParams.bottomMargin - mLoadViewHeight - 1);
@@ -120,7 +122,7 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
         super.onDraw(c);
         if (mLoadView == null) return;
 //        若数据不满一屏
-        if(getAdapter() == null) return;
+        if (getAdapter() == null) return;
         if (getChildCount() >= getAdapter().getItemCount()) {
             if (mLoadView.getVisibility() != GONE) {
                 mLoadView.setVisibility(GONE);
@@ -148,8 +150,9 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
      * 刷新中不在此处判断，在手指抬起时才判断
      */
     private int lastState;
+
     public void FsetState(float distance) {
-        if (!mLoadMoreEnable)return;
+        if (!mLoadMoreEnable) return;
 //        刷新中/没有更多，状态不变
         if (FmState == STATE_LOADING || FmState == STATE_NO_MORE) {
 
@@ -161,7 +164,7 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
             lastState = FmState;
             FmState = STATE_RELEASE_TO_LOAD;
             if (mLoadFooterCreator != null)
-                if (!mLoadFooterCreator.onReleaseToLoad(distance,lastState))
+                if (!mLoadFooterCreator.onReleaseToLoad(distance, lastState))
                     return;
         }
 //        正在拖动
@@ -169,7 +172,7 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
             lastState = FmState;
             FmState = STATE_PULLING;
             if (mLoadFooterCreator != null)
-                if (!mLoadFooterCreator.onStartPull(distance,lastState))
+                if (!mLoadFooterCreator.onStartPull(distance, lastState))
                     return;
         }
         FstartPull(distance);
@@ -180,6 +183,7 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
      * 拖动或回弹时，改变低部的margin
      */
     private ViewGroup.LayoutParams layoutParams;
+
     public void FstartPull(float distance) {
 //            该view的高度不能为0，否则将无法判断是否已滑动到底部
         if (distance < 1)
@@ -211,6 +215,8 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
 //            刷新
             if (mOnLoadListener != null)
                 mOnLoadListener.onStartLoading(mRealAdapter.getItemCount());
+            if (loadListener != null)
+                loadListener.onLoad();
             if (mLoadFooterCreator != null)
                 mLoadFooterCreator.onStartLoading();
 //            若在onStartRefreshing中调用了completeRefresh方法，将不会滚回初始位置，因此这里需加个判断
@@ -248,6 +254,7 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
         int startItem = mRealAdapter.getItemCount() + mAdapter.getHeadersCount() - loadItemCount;
         mAdapter.notifyItemRangeInserted(startItem, loadItemCount);
     }
+
     /**
      * 结束刷新
      */
@@ -267,6 +274,11 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
         this.mOnLoadListener = onLoadListener;
     }
 
+    public void setmOnLoadListener(LoadListener o) {
+        mLoadMoreEnable = true;
+        this.loadListener = o;
+    }
+
     /**
      * 设置自定义的加载尾部
      */
@@ -275,7 +287,7 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
             throw new IllegalArgumentException("the LoadViewCreator must not be null");
         } else {
             this.mLoadFooterCreator = loadViewCreator;
-            mLoadView = loadViewCreator.getLoadView(getContext(),this);
+            mLoadView = loadViewCreator.getLoadView(getContext(), this);
             if (mAdapter != null) {
                 mAdapter.setLoadView(mLoadView);
             }
@@ -294,19 +306,20 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
 //                重新测量底部
                 mNoMoreView.measure(0, 0);
                 ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
-                marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin,-mNoMoreView.getLayoutParams().height-1);
+                marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mNoMoreView.getLayoutParams().height - 1);
                 setLayoutParams(marginLayoutParams);
             }
-        }
-        else if (mLoadView != null) {
+        } else if (mLoadView != null) {
             mAdapter.setLoadView(mLoadView);
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
-            marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin,-mLoadViewHeight-1);
+            marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mLoadViewHeight - 1);
             setLayoutParams(marginLayoutParams);
         }
     }
 
-    /**获得加载中View和底部填充view的个数，用于绘制分割线*/
+    /**
+     * 获得加载中View和底部填充view的个数，用于绘制分割线
+     */
     public int getLoadViewCount() {
         if (mLoadView != null)
             return 2;
@@ -317,14 +330,18 @@ public class RefreshNLoadNestedRecyclerView extends PullToRefreshRecyclerView {
         this.mLoadMoreEnable = loadMoreEnable;
     }
 
-    /**获得真正的adapter*/
+    /**
+     * 获得真正的adapter
+     */
     @Override
     public Adapter getRealAdapter() {
         return mRealAdapter;
     }
 
 
-    /**设置下拉阻尼系数*/
+    /**
+     * 设置下拉阻尼系数
+     */
     public void setPullLoadRatio(float loadRatio) {
         this.mLoadRatio = loadRatio;
     }

@@ -4,12 +4,17 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import sunsh.customview.refreshview.hfrv.DefaultHeaderAndFooterCreator.DefaultLoadFooterCreator;
 import sunsh.customview.refreshview.hfrv.PullToLoad.LoadFooterCreator;
@@ -57,6 +62,8 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
     private View mLoadView;
     //  没有更多的尾部
     private View mNoMoreView;
+    //没有更多  提示view
+    private View mNomoreItemView;
     //    用于测量高度的加载View
     private int mLoadViewHeight = 0;
     private float mFirstY = 0;
@@ -70,8 +77,6 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
     private LoadListener loadListener;
     //  加载
     private LoadFooterCreator mLoadFooterCreator;
-
-
     private PullToLoadAdapter mAdapter;
     private Adapter mRealAdapter;
 
@@ -350,12 +355,17 @@ public class RefreshNLoadRecyclerView extends PullToRefreshRecyclerView {
                 ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
                 marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mNoMoreView.getLayoutParams().height - 1);
                 setLayoutParams(marginLayoutParams);
+                if (mNomoreItemView==null){
+                    mNomoreItemView = LayoutInflater.from(getContext()).inflate(R.layout.hfrv_nomoreitem,null);
+                    mAdapter.addFooterView(mNomoreItemView);
+                };
             }
         } else if (mLoadView != null) {
-            mAdapter.setLoadView(mLoadView);
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
             marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mLoadViewHeight - 1);
             setLayoutParams(marginLayoutParams);
+            if (mNomoreItemView!=null) mAdapter.removeFooterView(mNomoreItemView);
+            mAdapter.setLoadView(mLoadView);
         }
     }
 

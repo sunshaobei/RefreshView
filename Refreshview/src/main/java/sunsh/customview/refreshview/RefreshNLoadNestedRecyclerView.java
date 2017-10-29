@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -57,6 +58,8 @@ public class RefreshNLoadNestedRecyclerView extends RefreshRecyclerView4Nested {
     public View mLoadView;
     //  没有更多的尾部
     private View mNoMoreView;
+    //没有更多  提示view
+    private View mNomoreItemView;
     //    用于测量高度的加载View
     public int mLoadViewHeight = 0;
     private float mFirstY = 0;
@@ -308,12 +311,18 @@ public class RefreshNLoadNestedRecyclerView extends RefreshRecyclerView4Nested {
                 ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
                 marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mNoMoreView.getLayoutParams().height - 1);
                 setLayoutParams(marginLayoutParams);
+                if (mNomoreItemView==null){
+                    mNomoreItemView = LayoutInflater.from(getContext()).inflate(R.layout.hfrv_nomoreitem,null);
+                    mAdapter.addFooterView(mNomoreItemView);
+                };
             }
         } else if (mLoadView != null) {
             mAdapter.setLoadView(mLoadView);
             ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
             marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mLoadViewHeight - 1);
             setLayoutParams(marginLayoutParams);
+            if (mNomoreItemView!=null) mAdapter.removeFooterView(mNomoreItemView);
+            mAdapter.setLoadView(mLoadView);
         }
     }
 

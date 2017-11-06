@@ -45,8 +45,6 @@ public class RefreshNAutoLoadRecyclerView extends PullToRefreshRecyclerView {
     private boolean mLoadMoreEnable = false;
     private boolean mNoMore = false;
     private View mNoMoreView;
-    //没有更多  提示view
-    private View mNomoreItemView;
 
     private AutoLoadFooterCreator mAutoLoadFooterCreator;
     private OnLoadListener mOnLoadListener;
@@ -148,19 +146,10 @@ public class RefreshNAutoLoadRecyclerView extends PullToRefreshRecyclerView {
         if (mNoMore) {
             if (mNoMoreView != null){
                 mAdapter.setLoadView(mNoMoreView);
-                if (mNomoreItemView == null) {
-                    mNomoreItemView = LayoutInflater.from(getContext()).inflate(R.layout.hfrv_nomoreitem, null);
-                } else mAdapter.removeFooterView(mNomoreItemView);
-                mAdapter.addFooterView(mNomoreItemView);
             }
         } else if (mLoadView != null){
             mAdapter.setLoadView(mLoadView);
-            if (mNomoreItemView!=null) mAdapter.removeFooterView(mNomoreItemView);
         }
-    }
-
-    public void setmNomoreItemView(View v){
-        this.mNomoreItemView = v;
     }
 
     /**设置加载监听*/

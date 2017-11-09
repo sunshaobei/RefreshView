@@ -39,14 +39,14 @@ public class EmptyLoadFooterCreator extends LoadFooterCreator {
     @Override
     public View getNoMoreView(Context context, RecyclerView recyclerView) {
         if (mNoMoreView == null)
-            mNoMoreView = LayoutInflater.from(context).inflate(R.layout.hfrv_empty_foot, null);
+            mNoMoreView = LayoutInflater.from(context).inflate(R.layout.hfrv_empty_foot, recyclerView,false);
         return mNoMoreView;
     }
 
     @Override
     public View getLoadView(Context context, RecyclerView recyclerView) {
         if (mLoadView == null)
-            mLoadView = LayoutInflater.from(context).inflate(R.layout.hfrv_empty_foot, null);
+            mLoadView = LayoutInflater.from(context).inflate(R.layout.hfrv_empty_foot, recyclerView,false);
         return mLoadView;
     }
 }

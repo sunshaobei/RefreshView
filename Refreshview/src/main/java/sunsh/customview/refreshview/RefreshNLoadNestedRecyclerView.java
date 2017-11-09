@@ -307,7 +307,8 @@ public class RefreshNLoadNestedRecyclerView extends RefreshRecyclerView4Nested {
 //                重新测量底部
                 mNoMoreView.measure(0, 0);
                 ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
-                marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mNoMoreView.getLayoutParams().height - 1);
+//                marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin, -mNoMoreView.getLayoutParams().height - 1);
+                marginLayoutParams.setMargins(marginLayoutParams.leftMargin, marginLayoutParams.topMargin, marginLayoutParams.rightMargin,- 1);
                 setLayoutParams(marginLayoutParams);
             }
         } else if (mLoadView != null) {

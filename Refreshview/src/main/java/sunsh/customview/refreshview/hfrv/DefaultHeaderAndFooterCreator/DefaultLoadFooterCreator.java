@@ -87,9 +87,9 @@ public class DefaultLoadFooterCreator extends LoadFooterCreator {
     @Override
     public View getNoMoreView(Context context, RecyclerView recyclerView) {
         if (mNoMoreView == null) {
-            mNoMoreView = LayoutInflater.from(context).inflate(R.layout.layout_ptr_ptl,recyclerView,false);
-            mNoMoreView.findViewById(R.id.iv).setVisibility(View.GONE);
-            ((TextView) mNoMoreView.findViewById(R.id.tv)).setText("没有更多了哦");
+            mNoMoreView = LayoutInflater.from(context).inflate(R.layout.hfrv_nomoreitem,recyclerView,false);
+//            mNoMoreView.findViewById(R.id.iv).setVisibility(View.GONE);
+//            ((TextView) mNoMoreView.findViewById(R.id.tv)).setText("没有更多了哦");
         }
         return mNoMoreView;
     }

@@ -120,8 +120,6 @@ public class PullToRefreshRecyclerView extends HeaderAndFooterRecyclerView {
 
     @Override
     public boolean onTouchEvent(MotionEvent e) {
-        Log.e("ptlrecyclerviewsample","======="+e.getAction());
-
 //        若是不可以下拉
         if (!mRefreshEnable) return super.onTouchEvent(e);
 //        若刷新头部为空，不处理

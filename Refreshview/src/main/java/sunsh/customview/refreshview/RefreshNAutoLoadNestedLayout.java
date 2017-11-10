@@ -307,93 +307,6 @@ public class RefreshNAutoLoadNestedLayout extends LinearLayout implements Nested
         }
     }
 
-//    @Override
-//    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-//        final int width = getMeasuredWidth();
-//        final int height = getMeasuredHeight();
-//        if (getChildCount() == 0) {
-//            return;
-//        }
-//        if (mTarget == null) {
-//            ensureTarget();
-//        }
-//        if (mTarget == null) {
-//            return;
-//        }
-//        final View child = mTarget;
-//        final int childLeft = getPaddingLeft();
-//        final int childTop = getPaddingTop();
-//        final int childWidth = width - getPaddingLeft() - getPaddingRight();
-//        final int childHeight = height - getPaddingTop() - getPaddingBottom();
-//        child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
-//        Log.e(LOG_TAG,"onLayout,childTop=="+childTop+",childHeight"+childHeight);
-//        //草，就是因为这个，才会滚不回去，在重绘的过程中会进行新一次的onLayout
-//       /* if(firstMeasure) {//其实已经没有必要摆在这里了
-//            //  mOriginalOffsetBottom = height + mCircleDiameter;
-//            //mOriginalOffsetBottom = 1250;
-//            mCurrentTargetOffsetBottom = mOriginalOffsetBottom;
-//            mSpinnerBottomOffsetEnd = mOriginalOffsetBottom - mSpinnerOffsetEnd;
-//            firstMeasure = false;
-//            Log.e("fish", "firstMeasure,mCurrentTargetOffsetBottom==" + mCurrentTargetOffsetBottom + ",mSpinnerBottomOffsetEnd==" + mSpinnerBottomOffsetEnd);
-//            Log.e("fish", "firstMeasure,mOriginalOffsetBottom==" + mOriginalOffsetBottom);
-//        }*/
-//
-//        int circleWidth = mCircleView.getMeasuredWidth();
-//        int circleHeight = mCircleView.getMeasuredHeight();
-//        mCircleView.layout((width / 2 - circleWidth / 2), mCurrentTargetOffsetTop,
-//                (width / 2 + circleWidth / 2), mCurrentTargetOffsetTop + circleHeight);
-////        mCircleView.layout((width / 2 - circleWidth / 2), childHeight/2,
-////                     (width / 2 + circleWidth / 2), childHeight/2 + circleHeight);
-//
-//      // mCurrentTargetOffsetBottom = mOriginalOffsetBottom;
-//        int circleBottomWidth = mCircleViewBottom.getMeasuredWidth();
-//        int circleBottomHeight = mCircleViewBottom.getMeasuredHeight();
-//        mCircleViewBottom.setVisibility(View.VISIBLE);
-//        mCircleViewBottom.layout((width / 2 - circleBottomWidth / 2), mCurrentTargetOffsetBottom - circleBottomHeight,
-//                (width / 2 + circleBottomWidth / 2), mCurrentTargetOffsetBottom);
-//      //  mProgressBottom.start();
-//    }
-//
-//    @Override
-//    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-//        if (mTarget == null) {
-//            ensureTarget();
-//        }
-//        if (mTarget == null) {
-//            return;
-//        }
-//        mTarget.measure(MeasureSpec.makeMeasureSpec(
-//                getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
-//                MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
-//                getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
-//        mCircleView.measure(MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY),
-//                MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY));
-//        mCircleViewIndex = -1;
-//        // Get the index of the circleview.
-//        for (int index = 0; index < getChildCount(); index++) {
-//            if (getChildAt(index) == mCircleView) {
-//                mCircleViewIndex = index;
-//                Log.e(LOG_TAG,"mCircleViewIndex=="+mCircleViewIndex);
-//                break;
-//            }
-//        }
-//
-//       mCircleViewBottom.measure(MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY),
-//                MeasureSpec.makeMeasureSpec(mCircleDiameter, MeasureSpec.EXACTLY));
-//        mCircleViewBottomIndex = -1;
-//        // Get the index of the circleview.
-//        for (int index = 0; index < getChildCount(); index++) {
-//            if (getChildAt(index) == mCircleViewBottom) {
-//                mCircleViewBottomIndex = index;
-//                Log.e(LOG_TAG,"mCircleViewBottomIndex=="+mCircleViewBottomIndex);
-//                break;
-//            }
-//        }
-//
-//
-//    }
-
 
     boolean canLoadMore = true;
 
@@ -473,7 +386,7 @@ public class RefreshNAutoLoadNestedLayout extends LinearLayout implements Nested
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.e("fish", "onInterceptTouchEvent,ACTION_DOWN");
+                Log.e("sunsh", "onInterceptTouchEvent,ACTION_DOWN");
                 mActivePointerId = ev.getPointerId(0);
                 mIsBeingDragged = false;
 
@@ -485,7 +398,7 @@ public class RefreshNAutoLoadNestedLayout extends LinearLayout implements Nested
                 break;
 
             case MotionEvent.ACTION_MOVE://这个move基本不触发
-                Log.e("fish", "onInterceptTouchEvent,ACTION_MOVE");
+                Log.e("sunsh", "onInterceptTouchEvent,ACTION_MOVE");
                 if (mActivePointerId == INVALID_POINTER) {
                     Log.e(LOG_TAG, "Got ACTION_MOVE event but don't have an active pointer id.");
                     return false;
@@ -500,14 +413,14 @@ public class RefreshNAutoLoadNestedLayout extends LinearLayout implements Nested
                 break;
 
             case MotionEventCompat.ACTION_POINTER_UP:
-                Log.e("fish", "onInterceptTouchEvent,MotionEventCompat.ACTION_POINTER_UP");
+                Log.e("sunsh", "onInterceptTouchEvent,MotionEventCompat.ACTION_POINTER_UP");
                 onSecondaryPointerUp(ev);
                 break;
 
             case MotionEvent.ACTION_UP:
-                Log.e("fish", "onInterceptTouchEvent,motionEvent.ACTION_UP");
+                Log.e("sunsh", "onInterceptTouchEvent,motionEvent.ACTION_UP");
             case MotionEvent.ACTION_CANCEL:
-                Log.e("fish", "onInterceptTouchEvent,MotionEvent.ACTION_CANCEL");
+                Log.e("sunsh", "onInterceptTouchEvent,MotionEvent.ACTION_CANCEL");
                 mIsBeingDragged = false;
                 mActivePointerId = INVALID_POINTER;
                 break;
@@ -799,7 +712,7 @@ public class RefreshNAutoLoadNestedLayout extends LinearLayout implements Nested
         final int action = MotionEventCompat.getActionMasked(ev);
         int pointerIndex = -1;
 
-        Log.e("fish", "-onTouchEvent-;ACTION==" + ev.getAction());
+        Log.e("sunsh", "-onTouchEvent-;ACTION==" + ev.getAction());
         if (!isEnabled() || canChildScrollUp()
                 || getRefresh().HmState == RefreshRecyclerView4Nested.STATE_DEFAULT || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
@@ -808,13 +721,13 @@ public class RefreshNAutoLoadNestedLayout extends LinearLayout implements Nested
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.e("fish", "-onTouchEvent-;ACTION_DOWN");
+                Log.e("sunsh", "-onTouchEvent-;ACTION_DOWN");
                 mActivePointerId = ev.getPointerId(0);
                 mIsBeingDragged = false;
                 break;
 
             case MotionEvent.ACTION_MOVE: {
-                Log.e("fish", "-onTouchEvent-;ACTION_MOVE");
+                Log.e("sunsh", "-onTouchEvent-;ACTION_MOVE");
                 pointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     Log.e(LOG_TAG, "Got ACTION_MOVE event but have an invalid active pointer id.");
@@ -835,7 +748,7 @@ public class RefreshNAutoLoadNestedLayout extends LinearLayout implements Nested
                 break;
             }
             case MotionEventCompat.ACTION_POINTER_DOWN: {
-                Log.e("fish", "-onTouchEvent-;MotionEventCompat.ACTION_POINTER_DOWN");
+                Log.e("sunsh", "-onTouchEvent-;MotionEventCompat.ACTION_POINTER_DOWN");
                 pointerIndex = MotionEventCompat.getActionIndex(ev);
                 if (pointerIndex < 0) {
                     Log.e(LOG_TAG,
@@ -847,13 +760,13 @@ public class RefreshNAutoLoadNestedLayout extends LinearLayout implements Nested
             }
 
             case MotionEventCompat.ACTION_POINTER_UP:
-                Log.e("fish", "-onTouchEvent-;MotionEventCompat.ACTION_POINTER_UP");
+                Log.e("sunsh", "-onTouchEvent-;MotionEventCompat.ACTION_POINTER_UP");
                 onSecondaryPointerUp(ev);
                 break;
 
             case MotionEvent.ACTION_UP: {
                 ((RefreshRecyclerView4Nested) getChildAt(0)).HreplyPull();
-                Log.e("fish", "-onTouchEvent-;MotionEvent.ACTION_UP");
+                Log.e("sunsh", "-onTouchEvent-;MotionEvent.ACTION_UP");
                 pointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     Log.e(LOG_TAG, "Got ACTION_UP event but don't have an active pointer id.");

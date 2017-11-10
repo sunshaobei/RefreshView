@@ -241,20 +241,20 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
      */
     public boolean canChildScrollUp() {
         if (mChildScrollUpCallback != null) {
-            Log.e("fish", "canChildScrollUp;mChildScrollUpCallback != null");
+            Log.e("sunsh", "canChildScrollUp;mChildScrollUpCallback != null");
             return mChildScrollUpCallback.canChildScrollUp(this, mTarget);
 
         }
         if (android.os.Build.VERSION.SDK_INT < 14) {
-            Log.e("fish", "canChildScrollUp;Build.VERSION.SDK_INT < 14");
+            Log.e("sunsh", "canChildScrollUp;Build.VERSION.SDK_INT < 14");
             if (mTarget instanceof AbsListView) {
-                Log.e("fish", "canChildScrollUp;mTarget instanceof AbsListView");
+                Log.e("sunsh", "canChildScrollUp;mTarget instanceof AbsListView");
                 final AbsListView absListView = (AbsListView) mTarget;
                 return absListView.getChildCount() > 0
                         && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
                         .getTop() < absListView.getPaddingTop());
             } else {
-                Log.e("fish", "canChildScrollUp;mTarget ！instanceof AbsListView");
+                Log.e("sunsh", "canChildScrollUp;mTarget ！instanceof AbsListView");
                 return ViewCompat.canScrollVertically(mTarget, -1) || mTarget.getScrollY() > 0;
             }
         } else {
@@ -306,7 +306,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.e("fish", "onInterceptTouchEvent,ACTION_DOWN");
+                Log.e("sunsh", "onInterceptTouchEvent,ACTION_DOWN");
                 mActivePointerId = ev.getPointerId(0);
                 mIsBeingDragged = false;
 
@@ -318,7 +318,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
                 break;
 
             case MotionEvent.ACTION_MOVE://这个move基本不触发
-                Log.e("fish", "onInterceptTouchEvent,ACTION_MOVE");
+                Log.e("sunsh", "onInterceptTouchEvent,ACTION_MOVE");
                 if (mActivePointerId == INVALID_POINTER) {
                     Log.e(LOG_TAG, "Got ACTION_MOVE event but don't have an active pointer id.");
                     return false;
@@ -333,14 +333,14 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
                 break;
 
             case MotionEventCompat.ACTION_POINTER_UP:
-                Log.e("fish", "onInterceptTouchEvent,MotionEventCompat.ACTION_POINTER_UP");
+                Log.e("sunsh", "onInterceptTouchEvent,MotionEventCompat.ACTION_POINTER_UP");
                 onSecondaryPointerUp(ev);
                 break;
 
             case MotionEvent.ACTION_UP:
-                Log.e("fish", "onInterceptTouchEvent,motionEvent.ACTION_UP");
+                Log.e("sunsh", "onInterceptTouchEvent,motionEvent.ACTION_UP");
             case MotionEvent.ACTION_CANCEL:
-                Log.e("fish", "onInterceptTouchEvent,MotionEvent.ACTION_CANCEL");
+                Log.e("sunsh", "onInterceptTouchEvent,MotionEvent.ACTION_CANCEL");
                 mIsBeingDragged = false;
                 mActivePointerId = INVALID_POINTER;
                 break;
@@ -410,7 +410,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
 
         //处理底部的,圆圈已经出来了之后它又向下拖
         if (dy < 0 && mTotalUnconsumedBottom > 0 && getLoadMore().FmState != RefreshNLoadNestedRecyclerView.STATE_LOADING) {
-            Log.e("fish", "dy<0 && mTotalUnconsumedBottom > 0+++dy==" + dy + ",mTotalUnconsumedBottom==" + mTotalUnconsumedBottom);
+            Log.e("sunsh", "dy<0 && mTotalUnconsumedBottom > 0+++dy==" + dy + ",mTotalUnconsumedBottom==" + mTotalUnconsumedBottom);
             if (-dy > mTotalUnconsumedBottom)//如果拖动的很多，就先给圆圈，然后还给子控件
             {
                 consumed[1] = -(int) mTotalUnconsumedBottom;
@@ -449,7 +449,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
             mTotalUnconsumed = 0;
         }
         if (mTotalUnconsumedBottom > 0 && getRefresh().HmState != RefreshRecyclerView4Nested.STATE_REFRESHING) {
-            Log.e("fish", "onStopNestedScroll,mTotalUnconsumedBottom > 0");
+            Log.e("sunsh", "onStopNestedScroll,mTotalUnconsumedBottom > 0");
             finishSpinnerBottom(mTotalUnconsumedBottom);
             mTotalUnconsumedBottom = 0;
             mBottomIsScrolling = false;
@@ -648,7 +648,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
         final int action = MotionEventCompat.getActionMasked(ev);
         int pointerIndex = -1;
 
-        Log.e("fish", "-onTouchEvent-;ACTION==" + ev.getAction());
+        Log.e("sunsh", "-onTouchEvent-;ACTION==" + ev.getAction());
         if (!isEnabled() || canChildScrollUp()
                 || getRefresh().HmState == RefreshRecyclerView4Nested.STATE_DEFAULT || mNestedScrollInProgress) {
             // Fail fast if we're not in a state where a swipe is possible
@@ -657,13 +657,13 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                Log.e("fish", "-onTouchEvent-;ACTION_DOWN");
+                Log.e("sunsh", "-onTouchEvent-;ACTION_DOWN");
                 mActivePointerId = ev.getPointerId(0);
                 mIsBeingDragged = false;
                 break;
 
             case MotionEvent.ACTION_MOVE: {
-                Log.e("fish", "-onTouchEvent-;ACTION_MOVE");
+                Log.e("sunsh", "-onTouchEvent-;ACTION_MOVE");
                 pointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     Log.e(LOG_TAG, "Got ACTION_MOVE event but have an invalid active pointer id.");
@@ -684,7 +684,7 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
                 break;
             }
             case MotionEventCompat.ACTION_POINTER_DOWN: {
-                Log.e("fish", "-onTouchEvent-;MotionEventCompat.ACTION_POINTER_DOWN");
+                Log.e("sunsh", "-onTouchEvent-;MotionEventCompat.ACTION_POINTER_DOWN");
                 pointerIndex = MotionEventCompat.getActionIndex(ev);
                 if (pointerIndex < 0) {
                     Log.e(LOG_TAG,
@@ -696,13 +696,13 @@ public class RefreshNLoadNestedLayout extends LinearLayout implements NestedScro
             }
 
             case MotionEventCompat.ACTION_POINTER_UP:
-                Log.e("fish", "-onTouchEvent-;MotionEventCompat.ACTION_POINTER_UP");
+                Log.e("sunsh", "-onTouchEvent-;MotionEventCompat.ACTION_POINTER_UP");
                 onSecondaryPointerUp(ev);
                 break;
 
             case MotionEvent.ACTION_UP: {
                 ((RefreshRecyclerView4Nested) getChildAt(0)).HreplyPull();
-                Log.e("fish", "-onTouchEvent-;MotionEvent.ACTION_UP");
+                Log.e("sunsh", "-onTouchEvent-;MotionEvent.ACTION_UP");
                 pointerIndex = ev.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) {
                     Log.e(LOG_TAG, "Got ACTION_UP event but don't have an active pointer id.");
